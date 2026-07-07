@@ -6,7 +6,7 @@
 
 # Visão Geral
 
-O Ticket Worflow é um aplicativo web desenvolvido para centralizar o gerenciamento de chamados técnicos, permitindo acompanhar todo o ciclo de atendimento, permitindo acompanhar todo o ciclo de atendimento, desde a abertura da solicitação até sua conclusão, mantendo o histórico completo de cada atendimento.
+O Ticket Worflow é um aplicativo web desenvolvido para centralizar o gerenciamento de chamados técnicos, permitindo acompanhar todo o ciclo de atendimento, desde a abertura da solicitação até sua conclusão, mantendo o histórico completo de cada atendimento.
 
 Além do gerenciamento de chamados, o sistema possibilita o controle de usuários, organização da equipe de suporte e disponibilização de Informações gerenciais por meio de dashboards.
 
@@ -26,7 +26,7 @@ O Ticket Workflow foi idealizado para resolver esses desafios, centralizando tod
 
 Desenvolver uma aplicação web para gerenciamento de chamados e ativos de TI, proporcionando maior organização, rastreabilidade e eficiência no atendimento às solicitações dos usuários.
 
-O sistema permitirá o registro, acompanhamento e gerenciamento de chamados, oferecendo uma interface intutiva para usuários, técnicos e administradores. Além disso, disponibilizará indicadores e informações gerenciais que auxiliem na tomada de decisão e no monitoramento do desempenho da equipe de suporte.
+O sistema permitirá o registro, acompanhamento e gerenciamento de chamados, oferecendo uma interface intuitiva para usuários, técnicos e administradores. Além disso, disponibilizará indicadores e informações gerenciais que auxiliem na tomada de decisão e no monitoramento do desempenho da equipe de suporte.
 
 # Público-Alvo
 
