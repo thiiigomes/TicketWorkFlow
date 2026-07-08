@@ -41,3 +41,15 @@ RN015 - Usuários não poderão alterar o chamado após um técnico assumir o at
 RN016 - Chamados sem atualização por período superior ao SLA deverão ser destacados na Central de Atendimento e priorizados pelo sistema.
 
 RN017 - Chamados encerrados não poderão ser excluídos do sistema.
+
+RN018 - Todas as mensagens trocadas entre usuário e técnico deverão permancer registradas no histórico do chamado.
+
+RN019 - Sempre que o técnico solicitar informações adicionais ao usuário, o status do chamado deverá ser alterado para "Aguardando Usuário".
+
+RN020 - Após a resposta do usuário, o chamado deverá retornar automaticamente para o status "Em Atendimento".
+
+RN021 - Caso um chamado seja reaberto, o sistema deverá notificar automaticamente o gestor responsável.
+
+RN022 - Todo chamado reaberto deverá manter o histórico completo do atendimento anterior.
+
+RN023 - O comentário do usuário sobre o atendimento será opcional, ficará vinculado ao histórico do chamado e poderá ser colsutado pelo gestor e pelo técnico responsável.

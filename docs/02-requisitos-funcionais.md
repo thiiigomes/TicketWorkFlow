@@ -76,6 +76,10 @@ RF027 - O sistema deverá solicitar a identificação do equipamento durante a a
 
 RF028 - O sistema deverá permitir informar as tentativas de solução realizadas pelo usuário antes de abertura do chamado.
 
+RF029 - O sistema deverá permitir a troca de mensagens entre o técnico e o usuário durante o atendimento do chamado.
+
+RF030 - O sitema deverá permitir que o usuário registre um comentário sobre o atendimento após o encerramento do chamado.
+
 Perfis disponíveis:
 
 - Usuário
