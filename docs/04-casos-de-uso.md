@@ -186,7 +186,7 @@ Permitir que o técnico finalize um chamado após a conclusão do atendimento.
 11. O sistema disponibiliza, opcionalmente, um campo para que o usuário registre um comentário sobre o atendimento.
 12. Caso o problema persiste, o usuário poderá solicitar a reabertura do chamado.
 
-**Fluxos Alternstivos:**
+**Fluxos Alternativos:**
 
 **FA01**
 
@@ -194,7 +194,7 @@ Caso as informações obrigatórias não tenham sido preenchidas, o sistema deve
 
 **FA02**
 
-Caso o uduário solicite a reabertura do chamado, o sistema deverá restaurar o status para **Em Atendimento**, manter todo o histórico do atendimento anterior e notificar automaticamente o gestor responsável.
+Caso o usuário solicite a reabertura do chamado, o sistema deverá restaurar o status para **Em Atendimento**, manter todo o histórico do atendimento anterior e notificar automaticamente o gestor responsável.
 
 **Pós-condições:**
 
@@ -211,3 +211,104 @@ Caso o uduário solicite a reabertura do chamado, o sistema deverá restaurar o 
 - RN021
 - RN022
 - RN023
+
+## UC005 - Transferir Chamado
+
+**Ator Principal:** Técnico 
+
+**Objetivo:**
+Permitir que o técnico responsável transfira um chamado para outro técnico habilitado a dar continuidade ao atendimento.
+
+**Pré-condições:**
+
+- O técnico deve estar autenticado no sistema.
+- O chamado deve estar vinculado ao técnico responsável.
+- O chamado deve estar possuir o status **Em Atendimento**.
+
+**Observação:**
+
+- Somente o técnico responsável poderá transferir o chamado, para outro técnico prosseguir o chamado.
+
+**Fluxo Principal:**
+
+1. O técnico acessa o chamado em atendimento.
+2. O sistema apresenta todas as informações do chamado.
+3. O técnico seleciona a opção **Transferir Chamado**.
+4. O sistema apresenta a lista de técnicos disponíveis para atendimento.
+5. O técnico seleciona o novo responsável pelo chamado.
+6. O técnico informa o motivo da transferência.
+7. O sistema verifica se o técnico selecionado está disponível para atendimento.
+8. O sistema altera o responsável pelo chamado.
+9. O sistema registra a transferência no histórico do chamado.
+10. O sistema envia uma notificação interna ao novo técnico.
+11. O chamado permanece com o status **Em Atendimento**.
+
+**Fluxos Alternativos:**
+
+**FA01**
+
+Caso o técnico selecione um profissional que esteja de férias, afastado ou indisponível, o sistema deverá impedir a transferência e informar que o técnico selecionado não está disponível para atendimento.
+
+**Pós-condições:**
+
+- O chamado permanece com o status **Em Atendimento**.
+- O novo técnico torna-se o responsável pelo atendimento.
+- A transferência permanece registrada no histórico do chamado.
+- O novo técnico recebe uma notificação da transferência.
+
+
+**Regras de Négocio Relacionadas:**
+
+- RN007
+- RN013
+- RN024
+- RN025
+
+## UC006 - Login 
+
+**Ator Principal:** Usuário, Técnico e Administrador
+
+**Objetivo:**
+Permitir que usuários autenticados acessem o sistema conforme seu perfil de acesso.
+
+**Pré-condições:**
+
+- O usuário deve deve possuir um cadastro ativo no sistema.
+
+**Observações:**
+
+- O acesso às funcionalidades dependerá do perfil do usuário.
+
+**Fluxo Principal:**
+
+1. O usuário acessa a plataforma.
+2. O sistema apresenta a tela de login.
+3. O usuário informa seu usuário e senha.  
+4. O sistema valida as credenciais informadas.
+5. O sistema identifica o perfil do usuário.
+6. O sistema registra data, hora, usuário e resultado do login.
+7. O sistema direciona o usuário para a tela inicial correspondente ao seu perfil.
+
+**Fluxos Alternativos:**
+
+**FA01**
+
+Caso o usuário informe usuário e senha inválidos, o sistema deverá informar que as credenciais são inválidas e permitir uma nova tentativa de login.
+
+**FA02**
+
+Caso o usuário esqueça sua senha, deverá solicitar ao administrador a redefinição da senha.
+
+**FA03**
+
+Caso o usuário esteja utilizando uma senha temporária, o sistema deverá solicitar a alteração da senha antes de permitir o acesso às demais funcionalidades.
+
+**Pós-condições:**
+
+- O usuário acessa o sistema conforme seu perfil.
+- O acesso é registrado para auditoria.
+
+**Regras de Negócio Relacionadas:**
+
+- RN026
+- RN027

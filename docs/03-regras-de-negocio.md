@@ -53,3 +53,11 @@ RN021 - Caso um chamado seja reaberto, o sistema deverá notificar automaticamen
 RN022 - Todo chamado reaberto deverá manter o histórico completo do atendimento anterior.
 
 RN023 - O comentário do usuário sobre o atendimento será opcional, ficará vinculado ao histórico do chamado e poderá ser colsutado pelo gestor e pelo técnico responsável.
+
+RN024 - O chamado somente poderá ser transferido para técnicos ativos e disponíveis.
+
+RN025 - Toda transferência deverá possuir um motivo registrado.
+
+RN026 - O administrador poderá definir ou gerar uma senha temporária para novos usuários.
+
+RN027 - Caso o usuário esteja utilizando uma senha temporária, o sistema deverá solicitar a alteração da senha no primeiro acesso.

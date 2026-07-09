@@ -1,0 +1,43 @@
+<mxfile host="app.diagrams.net">
+  <diagram name="Página-1" id="en0yxrzXPUyeANHkxCTE">
+    <mxGraphModel dx="2335" dy="1493" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="ZiNZv4cwF3PVXVf8ayOe-1" parent="1" style="rounded=0;whiteSpace=wrap;html=1;align=center;" value="" vertex="1">
+          <mxGeometry height="1040" width="659" x="84" y="80" as="geometry" />
+        </mxCell>
+        <mxCell id="ZiNZv4cwF3PVXVf8ayOe-2" parent="1" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;outlineConnect=0;" value="Técnico&lt;div&gt;&lt;br&gt;&lt;/div&gt;" vertex="1">
+          <mxGeometry height="60" width="30" x="384" y="860" as="geometry" />
+        </mxCell>
+        <mxCell id="ZiNZv4cwF3PVXVf8ayOe-4" parent="1" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;outlineConnect=0;" value="Usuário" vertex="1">
+          <mxGeometry height="60" width="30" x="40" y="700" as="geometry" />
+        </mxCell>
+        <mxCell id="ZiNZv4cwF3PVXVf8ayOe-5" parent="1" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;outlineConnect=0;" value="Administrador" vertex="1">
+          <mxGeometry height="60" width="30" x="384" y="1020" as="geometry" />
+        </mxCell>
+        <mxCell id="ZiNZv4cwF3PVXVf8ayOe-21" parent="1" style="ellipse;whiteSpace=wrap;html=1;" value="(Comentar Chamado)" vertex="1">
+          <mxGeometry height="60" width="125" x="157.5" y="450" as="geometry" />
+        </mxCell>
+        <mxCell id="ZiNZv4cwF3PVXVf8ayOe-22" parent="1" style="ellipse;whiteSpace=wrap;html=1;" value="(Login)" vertex="1">
+          <mxGeometry height="50" width="110" x="160" y="180" as="geometry" />
+        </mxCell>
+        <mxCell id="ZiNZv4cwF3PVXVf8ayOe-23" parent="1" style="ellipse;whiteSpace=wrap;html=1;" value="(Abrir Chamado)" vertex="1">
+          <mxGeometry height="50" width="110" x="160" y="250" as="geometry" />
+        </mxCell>
+        <mxCell id="ZiNZv4cwF3PVXVf8ayOe-24" parent="1" style="ellipse;whiteSpace=wrap;html=1;" value="(Acompanhar Chamado)" vertex="1">
+          <mxGeometry height="60" width="140" x="150" y="310" as="geometry" />
+        </mxCell>
+        <mxCell id="ZiNZv4cwF3PVXVf8ayOe-25" parent="1" style="ellipse;whiteSpace=wrap;html=1;" value="(Reabrir Chamado)" vertex="1">
+          <mxGeometry height="50" width="110" x="165" y="390" as="geometry" />
+        </mxCell>
+        <mxCell id="ZiNZv4cwF3PVXVf8ayOe-28" edge="1" parent="1" source="ZiNZv4cwF3PVXVf8ayOe-1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;innerLoopWaypoints=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;" target="ZiNZv4cwF3PVXVf8ayOe-1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="ZiNZv4cwF3PVXVf8ayOe-30" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;" value="&lt;span style=&quot;font-size: 13px;&quot;&gt;Ticket WorFlow&lt;/span&gt;" vertex="1">
+          <mxGeometry height="30" width="110" x="340" y="120" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
