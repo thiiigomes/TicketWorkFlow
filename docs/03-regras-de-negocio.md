@@ -61,3 +61,5 @@ RN025 - Toda transferência deverá possuir um motivo registrado.
 RN026 - O administrador poderá definir ou gerar uma senha temporária para novos usuários.
 
 RN027 - Caso o usuário esteja utilizando uma senha temporária, o sistema deverá solicitar a alteração da senha no primeiro acesso.
+
+RM028 - Um técnico não poderá assumir novos chamados quando atingir o limite máximo de atendimentos simultâneos definido pela organização.
