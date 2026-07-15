@@ -1,6 +1,6 @@
-CREATE DATABASE ticket_worflow;
+CREATE DATABASE ticket_workflow;
 
-USE ticket_worflow;
+USE ticket_workflow;
 
 CREATE TABLE usuario (
  
