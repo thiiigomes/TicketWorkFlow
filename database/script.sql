@@ -8,7 +8,7 @@ CREATE TABLE usuario (
     nome VARCHAR(100) NOT NULL,
     email VARCHAR(100) NOT NULL UNIQUE,
     senha VARCHAR(255) NOT NULL,
-    telfone VARCHAR(20),
+    telefone VARCHAR(20),
     departamento VARCHAR(100) NOT NULL,
     perfil VARCHAR(50) NOT NULL,
     status VARCHAR(20) NOT NULL DEFAULT 'Ativo',
