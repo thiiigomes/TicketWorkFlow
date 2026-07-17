@@ -88,9 +88,9 @@ CREATE TABLE historico (
 
     id INT PRIMARY KEY AUTO_INCREMENT,
     tipo_movimentacao VARCHAR(50) NOT NULL,
-    status_anterior VARCHAR(20) NOT NULL,
-    status_novo VARCHAR(20) NOT NULL,
-    observacao TEXT NOT NULL,
+    status_anterior VARCHAR(20),
+    status_novo VARCHAR(20),
+    descricao TEXT NOT NULL,
     data_hora DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     chamado_id INT NOT NULL,
     usuario_id INT NOT NULL,
@@ -107,11 +107,15 @@ CREATE TABLE anexo (
     id INT PRIMARY KEY AUTO_INCREMENT,
     nome_arquivo VARCHAR(255) NOT NULL,
     tipo VARCHAR(100) NOT NULL,
+    tamanho VARCHAR(20) NOT NULL,
     caminho_arquivo VARCHAR(1000) NOT NULL,
     data_upload DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     comentario_id INT NOT NULL,
+    usuario_id INT NOT NULL,
 
     FOREIGN KEY (comentario_id)
         REFERENCES comentario(id)
-);
 
+    FOREIGN KEY (usuario_id)
+        REFERENCES usuario(id)
+);
