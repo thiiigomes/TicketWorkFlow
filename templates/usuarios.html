@@ -1,0 +1,39 @@
+{% extends 'base.html' %}
+
+{% block title %}
+Ticket Workflow
+{% endblock %}
+
+{% block content %}
+
+<div class="container">
+
+    <h1>Usuários cadastrados</h1>
+
+    <table>
+
+        <tr>
+            <th>ID</th>
+            <th>Nome</th>
+            <th>Email</th>
+        </tr>
+
+        {% for usuario in usuarios %}
+
+        <tr>
+
+            <td>{{ usuario.id }}</td>
+
+            <td>{{ usuario.nome }}</td>
+
+            <td>{{ usuario.email }}</td>
+
+        </tr>
+
+        {% endfor %}
+
+    </table>
+
+</div>
+
+{% endblock %}

@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<h1>Lista de Chamados</h1>
+
+{% for chamado in chamados %}
+
+<p>{{ chamado.titulo }}</p>
+
+{% endfor %}
+
+{% endblock %}
