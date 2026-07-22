@@ -1,4 +1,4 @@
-from config import get_connection
+from database.connection import get_connection
 
 def listar_chamados():
 
@@ -10,15 +10,15 @@ def listar_chamados():
         SELECT
             
             
-            c.id
+            c.id,
             c.titulo,
             c.status,
             
             u.nome AS solicitante,
             t.nome AS tecnico,
-            cat.nome AS categoria
+            cat.nome AS categoria,
             p.nome AS prioridade,
-            e.nome AS equipamento
+            CONCAT(e.fabricante, ' ', e.modelo) AS equipamento
         
         FROM chamado c
         
@@ -26,7 +26,7 @@ def listar_chamados():
             ON c.usuario_id = u.id
             
         JOIN usuario t
-            ON c.usuario_id = t.id
+            ON c.tecnico_id = t.id
             
         JOIN categoria cat
             ON c.categoria_id = cat.id

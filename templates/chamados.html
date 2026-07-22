@@ -1,13 +1,51 @@
 {% extends "base.html" %}
 
+{% block title %}
+Chamados
+{% endblock %}
+
 {% block content %}
 
 <h1>Lista de Chamados</h1>
 
-{% for chamado in chamados %}
+<table class="tabela">
 
-<p>{{ chamado.titulo }}</p>
+    <thead>
 
-{% endfor %}
+        <tr>
+            <th>ID</th>
+            <th>Título</th>
+            <th>Solicitante</th>
+            <th>Técnico</th>
+            <th>Categoria</th>
+            <th>Equipamento</th>
+            <th>Prioridade</th>
+            <th>Status</th>
+        </tr>
+
+    </thead>
+
+    <tbody>
+
+        {% for chamado in chamados %}
+
+        <tr>
+
+            <td>{{ chamado.id }}</td>
+            <td>{{ chamado.titulo }}</td>
+            <td>{{ chamado.solicitante }}</td>
+            <td>{{ chamado.tecnico }}</td>
+            <td>{{ chamado.categoria }}</td>
+            <td>{{ chamado.equipamento }}</td>
+            <td>{{ chamado.prioridade }}</td>
+            <td>{{ chamado.status }}</td>
+
+        </tr>
+
+        {% endfor %}
+
+    </tbody>
+
+</table>
 
 {% endblock %}
