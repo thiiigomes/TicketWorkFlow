@@ -1,6 +1,10 @@
 from flask import Blueprint, render_template, session, redirect, url_for, request
 
-from models.chamado import listar_chamados, criar_chamado
+from models.chamado import (
+    listar_chamados,
+    criar_chamado,
+    buscar_chamado_por_id
+)
 from models.categoria import listar_categorias
 from models.prioridade import listar_prioridades
 from models.equipamento import listar_equipamentos
@@ -64,4 +68,17 @@ def novo_chamado():
         prioridades=prioridades,
         equipamentos=equipamentos,
         tecnicos=tecnicos
+    )
+
+@chamados_bp.route("/chamados/<int:chamado_id>")
+def visualizar_chamado(chamado_id):
+
+    if "usuario_id" not in session:
+        return redirect(url_for("auth.login"))
+
+    chamado = buscar_chamado_por_id(chamado_id)
+
+    return render_template(
+        "visualizar_chamado.html",
+        chamado=chamado
     )

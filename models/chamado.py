@@ -99,3 +99,53 @@ def criar_chamado(
 
     cursor.close()
     conexao.close()
+
+def buscar_chamado_por_id(chamado_id):
+    
+    conexao = get_connection()
+
+    cursor = conexao.cursor(dictionary=True)
+
+    cursor.execute("""
+        SELECT
+            
+            c.id,
+            c.titulo,
+            c.descricao,
+            c.status,
+            c.data_abertura,
+            c.data_fechamento,
+            
+            u.nome AS solicitante,
+            t.nome AS tecnico,
+            cat.nome AS categoria,
+            p.nome AS prioridade,
+            CONCAT(e.fabricante, ' ', e.modelo) AS equipamento
+        
+        FROM chamado c
+        
+        JOIN usuario u
+            ON c.usuario_id = u.id
+            
+        JOIN usuario t
+            ON c.tecnico_id = t.id
+            
+        JOIN categoria cat
+            ON c.categoria_id = cat.id
+        
+        JOIN prioridade p
+            ON c.prioridade_id = p.id
+            
+        JOIN equipamento e
+            ON c.equipamento_id = e.id
+        
+        WHERE c.id = %s
+    
+    """, (chamado_id,))
+
+    chamado = cursor.fetchone()
+
+    cursor.close()
+    conexao.close()
+
+    return chamado

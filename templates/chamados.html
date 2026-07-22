@@ -21,6 +21,7 @@ Chamados
             <th>Equipamento</th>
             <th>Prioridade</th>
             <th>Status</th>
+            <th>Ações</th>
         </tr>
 
     </thead>
@@ -39,6 +40,15 @@ Chamados
             <td>{{ chamado.equipamento }}</td>
             <td>{{ chamado.prioridade }}</td>
             <td>{{ chamado.status }}</td>
+            <td>
+
+                <a href="{{ url_for('chamados.visualizar_chamado', chamado_id=chamado.id) }}">
+
+                    👁
+
+                </a>
+
+            </td>
 
         </tr>
 

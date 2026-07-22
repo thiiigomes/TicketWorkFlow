@@ -1,0 +1,82 @@
+{% extends "base.html" %}
+
+{% block title %}
+Chamado #{{ chamado.id }}
+{% endblock %}
+
+{% block content %}
+
+<div class="card shadow">
+
+    <div class="card-header bg-primary text-white">
+
+        <h3 class="mb-0">
+            <i class="bi bi-ticket-detailed"></i>
+            Chamado #{{ chamado.id }}
+        </h3>
+
+    </div>
+
+    <div class="card-body">
+
+        <h4>{{ chamado.titulo }}</h4>
+
+        <span class="badge bg-success">
+            {{ chamado.status }}
+        </span>
+
+        <hr>
+
+        <h5>Descrição</h5>
+
+        <p>{{ chamado.descricao }}</p>
+
+        <hr>
+
+        <div class="row">
+
+            <div class="col-md-6">
+                <strong>Solicitante:</strong><br>
+                {{ chamado.solicitante }}
+            </div>
+
+            <div class="col-md-6">
+                <strong>Técnico:</strong><br>
+                {{ chamado.tecnico }}
+            </div>
+
+        </div>
+
+        <br>
+
+        <div class="row">
+
+            <div class="col-md-4">
+                <strong>Categoria</strong><br>
+                {{ chamado.categoria }}
+            </div>
+
+            <div class="col-md-4">
+                <strong>Equipamento</strong><br>
+                {{ chamado.equipamento }}
+            </div>
+
+            <div class="col-md-4">
+                <strong>Prioridade</strong><br>
+                {{ chamado.prioridade }}
+            </div>
+
+        </div>
+
+        <br>
+
+        <a href="{{ url_for('chamados.chamados') }}" class="btn btn-secondary">
+            <i class="bi bi-arrow-left"></i>
+            Voltar
+        </a>
+
+    </div>
+
+</div>
+
+{% endblock %}
