@@ -2,6 +2,7 @@ from database.connection import get_connection
 
 def listar_chamados():
 
+
     conexao = get_connection()
 
     cursor = conexao.cursor(dictionary=True)
@@ -47,3 +48,54 @@ def listar_chamados():
     conexao.close()
 
     return chamados
+
+def criar_chamado(
+    titulo,
+    descricao,
+    usuario_id,
+    tecnico_id,
+    categoria_id,
+    prioridade_id,
+    equipamento_id
+):
+    
+
+    conexao = get_connection()
+    cursor = conexao.cursor()
+
+    cursor.execute("""
+    INSERT INTO chamado (
+        titulo,
+        descricao,
+        status,
+        usuario_id,
+        tecnico_id,
+        categoria_id,
+        prioridade_id,
+        equipamento_id
+    )
+    VALUES (
+        %s,
+        %s,
+        %s,
+        %s,
+        %s,
+        %s,
+        %s,
+        %s
+    )
+""", (
+    titulo,
+    descricao,
+    "Aberto",
+    usuario_id,
+    tecnico_id,
+    categoria_id,
+    prioridade_id,
+    equipamento_id
+))
+
+    conexao.commit()
+
+    cursor.close()
+    conexao.close()

@@ -1,0 +1,95 @@
+{% extends "base.html" %}
+
+{% block title %}
+Novo Chamado
+{% endblock %}
+
+{% block content %}
+
+<h1>Novo Chamado</h1>
+
+<form method="POST">
+
+    <label>Título</label><br>
+    <input type="text" name="titulo">
+
+    <br><br>
+
+    <label>Descrição</label><br>
+    <textarea name="descricao" rows="5"></textarea>
+
+    <br><br>
+
+    <label>Categoria</label><br>
+
+    <select name="categoria_id">
+
+        {% for categoria in categorias %}
+
+        <option value="{{ categoria.id }}">
+            {{ categoria.nome }}
+        </option>
+
+        {% endfor %}
+
+    </select>
+
+    <br><br>
+
+    <label>Prioridade</label><br>
+
+    <select name="prioridade_id">
+
+        {% for prioridade in prioridades %}
+
+        <option value="{{ prioridade.id }}">
+            {{ prioridade.nome }}
+        </option>
+
+        {% endfor %}
+
+    </select>
+
+    <br><br>
+
+    <label>Equipamento</label><br>
+
+    <select name="equipamento_id">
+
+        {% for equipamento in equipamentos %}
+
+        <option value="{{ equipamento.id }}">
+            {{ equipamento.nome }}
+        </option>
+
+        {% endfor %}
+
+    </select>
+
+    <br><br>
+
+    <label>Técnico</label><br>
+
+    <select name="tecnico_id">
+
+        {% for tecnico in tecnicos %}
+
+        <option value="{{ tecnico.id }}">
+            {{ tecnico.nome }}
+        </option>
+
+        {% endfor %}
+
+    </select>
+
+    <br><br>
+
+    <button type="submit">
+
+        Salvar Chamado
+
+    </button>
+
+</form>
+
+{% endblock %}

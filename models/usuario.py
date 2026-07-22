@@ -38,3 +38,25 @@ def buscar_usuario_por_email(email):
     conexao.close()
 
     return usuario
+
+def listar_tecnicos():
+
+    conexao = get_connection()
+
+    cursor = conexao.cursor(dictionary=True)
+
+    cursor.execute("""
+        SELECT
+            id,
+            nome
+        FROM usuario
+        WHERE perfil = 'Técnico'
+        ORDER BY nome
+    """)
+
+    tecnicos = cursor.fetchall()
+
+    cursor.close()
+    conexao.close()
+
+    return tecnicos
