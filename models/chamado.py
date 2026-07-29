@@ -149,3 +149,113 @@ def buscar_chamado_por_id(chamado_id):
     conexao.close()
 
     return chamado
+
+def contar_chamados():
+
+    conexao = get_connection()
+    cursor = conexao.cursor()
+
+    cursor.execute("""
+        SELECT COUNT(*)
+        FROM chamado
+    """)
+
+    total = cursor.fetchone()[0]
+
+    cursor.close()
+    conexao.close()
+
+    return total
+
+def contar_abertos():
+
+    conexao = get_connection()
+    cursor = conexao.cursor()
+
+    cursor.execute("""
+        SELECT COUNT(*)
+        FROM chamado
+        WHERE status = 'Aberto'
+    """)
+
+    total = cursor.fetchone()[0]
+
+    cursor.close()
+    conexao.close()
+
+    return total
+
+
+def contar_andamento():
+
+    conexao = get_connection()
+    cursor = conexao.cursor()
+
+    cursor.execute("""
+        SELECT COUNT(*)
+        FROM chamado
+        WHERE status = 'Em andamento'
+    """)
+
+    total = cursor.fetchone()[0]
+
+    cursor.close()
+    conexao.close()
+
+    return total
+
+
+def contar_fechados():
+
+    conexao = get_connection()
+    cursor = conexao.cursor()
+
+    cursor.execute("""
+        SELECT COUNT(*)
+        FROM chamado
+        WHERE status = 'Fechado'
+    """)
+
+    total = cursor.fetchone()[0]
+
+    cursor.close()
+    conexao.close()
+
+    return total
+
+def listar_ultimos_chamados():
+
+    conexao = get_connection()
+
+    cursor = conexao.cursor(dictionary=True)
+
+    cursor.execute("""
+        SELECT
+
+            c.id,
+            c.titulo,
+            c.status,
+
+            t.nome AS tecnico,
+
+            p.nome AS prioridade
+
+        FROM chamado c
+
+        JOIN usuario t
+            ON c.tecnico_id = t.id
+
+        JOIN prioridade p
+            ON c.prioridade_id = p.id
+
+        ORDER BY c.id DESC
+
+        LIMIT 5
+    """)
+
+    chamados = cursor.fetchall()
+
+    cursor.close()
+    conexao.close()
+
+    return chamados

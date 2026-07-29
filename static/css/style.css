@@ -251,3 +251,13 @@ td{
 .btn-sair:hover{
     background: #173a5b;
 }
+
+.card {
+    transition: 0.25s;
+    border-radius: 15px;
+}
+
+.card:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 .7rem 1.5rem rgba(0,0,0,.18) !important;
+}
