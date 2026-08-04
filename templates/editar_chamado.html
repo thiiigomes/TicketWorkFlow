@@ -1,0 +1,212 @@
+{% extends "layouts/app.html" %}
+
+{% block title %}
+Editar Chamado
+{% endblock %}
+
+{% block content %}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+
+    <div>
+        <h2 class="fw-bold mb-1">Editar Chamado</h2>
+        <p class="text-muted mb-0">
+            Atualize as informações do chamado.
+        </p>
+    </div>
+
+</div>
+
+<div class="card shadow border-0">
+
+    <div class="card-body">
+
+        <form method="POST">
+
+            <div class="row">
+
+                <div class="col-md-6 mb-3">
+
+                    <label class="form-label">Título</label>
+
+                    <input
+                        type="text"
+                        class="form-control"
+                        name="titulo"
+                        value="{{ chamado.titulo }}"
+                        required>
+
+                </div>
+
+                <div class="col-md-6 mb-3">
+
+                    <label class="form-label">Técnico</label>
+
+                    <select
+                        class="form-select"
+                        name="tecnico_id">
+
+                        {% for tecnico in tecnicos %}
+
+                        <option
+                            value="{{ tecnico.id }}"
+                            {% if tecnico.id == chamado.tecnico_id %}selected{% endif %}>
+
+                            {{ tecnico.nome }}
+
+                        </option>
+
+                        {% endfor %}
+
+                    </select>
+
+                </div>
+
+            </div>
+
+            <div class="mb-3">
+
+                <label class="form-label">Descrição</label>
+
+                <textarea
+                    class="form-control"
+                    name="descricao"
+                    rows="5">{{ chamado.descricao }}</textarea>
+
+            </div>
+
+            <div class="row">
+
+                <div class="col-md-4 mb-3">
+
+                    <label class="form-label">Categoria</label>
+
+                    <select
+                        class="form-select"
+                        name="categoria_id">
+
+                        {% for categoria in categorias %}
+
+                        <option
+                            value="{{ categoria.id }}"
+                            {% if categoria.id == chamado.categoria_id %}selected{% endif %}>
+
+                            {{ categoria.nome }}
+
+                        </option>
+
+                        {% endfor %}
+
+                    </select>
+
+                </div>
+
+                <div class="col-md-4 mb-3">
+
+                    <label class="form-label">Prioridade</label>
+
+                    <select
+                        class="form-select"
+                        name="prioridade_id">
+
+                        {% for prioridade in prioridades %}
+
+                        <option
+                            value="{{ prioridade.id }}"
+                            {% if prioridade.id == chamado.prioridade_id %}selected{% endif %}>
+
+                            {{ prioridade.nome }}
+
+                        </option>
+
+                        {% endfor %}
+
+                    </select>
+
+                </div>
+
+                <div class="col-md-4 mb-3">
+
+                    <label class="form-label">Status</label>
+
+                    <select
+                        class="form-select"
+                        name="status">
+
+                        <option value="Aberto"
+                            {% if chamado.status == "Aberto" %}selected{% endif %}>
+                            Aberto
+                        </option>
+
+                        <option value="Em andamento"
+                            {% if chamado.status == "Em andamento" %}selected{% endif %}>
+                            Em andamento
+                        </option>
+
+                        <option value="Fechado"
+                            {% if chamado.status == "Fechado" %}selected{% endif %}>
+                            Fechado
+                        </option>
+
+                    </select>
+
+                </div>
+
+            </div>
+
+            <div class="row">
+
+                <div class="col-md-12 mb-3">
+
+                    <label class="form-label">Equipamento</label>
+
+                    <select
+                        class="form-select"
+                        name="equipamento_id">
+
+                        {% for equipamento in equipamentos %}
+
+                        <option
+                            value="{{ equipamento.id }}"
+                            {% if equipamento.id == chamado.equipamento_id %}selected{% endif %}>
+
+                            {{ equipamento.nome }}
+
+                        </option>
+
+                        {% endfor %}
+
+                    </select>
+
+                </div>
+
+            </div>
+
+            <div class="d-flex justify-content-end gap-2 mt-4">
+
+                <a href="{{ url_for('chamados.chamados') }}"
+                   class="btn btn-outline-secondary">
+
+                    <i class="bi bi-arrow-left"></i>
+                    Cancelar
+
+                </a>
+
+                <button
+                    type="submit"
+                    class="btn btn-primary">
+
+                    <i class="bi bi-check-circle"></i>
+                    Salvar Alterações
+
+                </button>
+
+            </div>
+
+        </form>
+
+    </div>
+
+</div>
+
+{% endblock %}

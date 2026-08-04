@@ -1,46 +1,73 @@
 from database.connection import get_connection
 
-def listar_chamados():
-
+def listar_chamados(
+    pesquisa="",
+    status="",
+    prioridade="",
+    tecnico=""
+):
 
     conexao = get_connection()
-
     cursor = conexao.cursor(dictionary=True)
 
-    cursor.execute("""
+    sql = """
         SELECT
-            
-            
+
             c.id,
             c.titulo,
             c.status,
-            
+
             u.nome AS solicitante,
             t.nome AS tecnico,
             cat.nome AS categoria,
             p.nome AS prioridade,
             CONCAT(e.fabricante, ' ', e.modelo) AS equipamento
-        
+
         FROM chamado c
-        
+
         JOIN usuario u
             ON c.usuario_id = u.id
-            
+
         JOIN usuario t
             ON c.tecnico_id = t.id
-            
+
         JOIN categoria cat
             ON c.categoria_id = cat.id
-        
+
         JOIN prioridade p
             ON c.prioridade_id = p.id
-            
+
         JOIN equipamento e
             ON c.equipamento_id = e.id
-            
-        ORDER BY c.id DESC
-        
-    """)
+
+        WHERE 1=1
+    """
+
+    parametros = []
+
+    if pesquisa:
+
+        sql += " AND c.titulo LIKE %s"
+        parametros.append(f"%{pesquisa}%")
+
+    if status:
+
+        sql += " AND c.status = %s"
+        parametros.append(status)
+
+    if prioridade:
+
+        sql += " AND p.nome = %s"
+        parametros.append(prioridade)
+
+    if tecnico:
+
+        sql += " AND t.nome = %s"
+        parametros.append(tecnico)
+
+    sql += " ORDER BY c.id DESC"
+
+    cursor.execute(sql, parametros)
 
     chamados = cursor.fetchall()
 
@@ -100,6 +127,47 @@ def criar_chamado(
     cursor.close()
     conexao.close()
 
+def atualizar_chamado(
+    chamado_id,
+    titulo,
+    descricao,
+    tecnico_id,
+    categoria_id,
+    prioridade_id,
+    equipamento_id,
+    status
+):
+
+    conexao = get_connection()
+    cursor = conexao.cursor()
+
+    cursor.execute("""
+        UPDATE chamado
+        SET
+            titulo = %s,
+            descricao = %s,
+            tecnico_id = %s,
+            categoria_id = %s,
+            prioridade_id = %s,
+            equipamento_id = %s,
+            status = %s
+        WHERE id = %s
+    """, (
+        titulo,
+        descricao,
+        tecnico_id,
+        categoria_id,
+        prioridade_id,
+        equipamento_id,
+        status,
+        chamado_id
+    ))
+
+    conexao.commit()
+
+    cursor.close()
+    conexao.close()
+
 def buscar_chamado_por_id(chamado_id):
     
     conexao = get_connection()
@@ -113,6 +181,13 @@ def buscar_chamado_por_id(chamado_id):
             c.titulo,
             c.descricao,
             c.status,
+           
+            c.usuario_id,
+            c.tecnico_id,
+            c.categoria_id,
+            c.prioridade_id,
+            c.equipamento_id,
+
             c.data_abertura,
             c.data_fechamento,
             
