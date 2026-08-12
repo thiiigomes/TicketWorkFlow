@@ -4,7 +4,8 @@ from models.chamado import (
     listar_chamados,
     criar_chamado,
     buscar_chamado_por_id,
-    atualizar_chamado
+    atualizar_chamado,
+    excluir_chamado
 )
 from models.categoria import listar_categorias
 from models.prioridade import listar_prioridades
@@ -140,3 +141,13 @@ def editar_chamado(chamado_id):
         equipamentos=equipamentos,
         tecnicos=tecnicos
     )
+
+@chamados_bp.route("/chamados/<int:chamado_id>/excluir", methods=["POST"])
+def excluir_chamado_rota(chamado_id):
+
+    if "usuario_id" not in session:
+        return redirect(url_for("auth.login"))
+
+    excluir_chamado(chamado_id)
+
+    return redirect(url_for("chamados.chamados"))

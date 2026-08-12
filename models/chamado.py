@@ -76,6 +76,40 @@ def listar_chamados(
 
     return chamados
 
+def listar_ultimos_chamados(limite=5):
+
+    conexao = get_connection()
+    cursor = conexao.cursor(dictionary=True)
+
+    cursor.execute("""
+        SELECT
+            c.id,
+            c.titulo,
+            c.status,
+            p.nome AS prioridade,
+            t.nome AS tecnico
+
+        FROM chamado c
+
+        JOIN prioridade p
+            ON c.prioridade_id = p.id
+
+        LEFT JOIN usuario t
+            ON c.tecnico_id = t.id
+
+        ORDER BY c.id DESC
+
+        LIMIT %s
+    """, (limite,))
+
+    chamados = cursor.fetchall()
+
+    cursor.close()
+    conexao.close()
+
+    return chamados
+
+
 def criar_chamado(
     titulo,
     descricao,
@@ -298,39 +332,17 @@ def contar_fechados():
 
     return total
 
-def listar_ultimos_chamados():
+def excluir_chamado(chamado_id):
 
     conexao = get_connection()
-
-    cursor = conexao.cursor(dictionary=True)
+    cursor = conexao.cursor()
 
     cursor.execute("""
-        SELECT
+        DELETE FROM chamado
+        WHERE id = %s
+    """, (chamado_id,))
 
-            c.id,
-            c.titulo,
-            c.status,
-
-            t.nome AS tecnico,
-
-            p.nome AS prioridade
-
-        FROM chamado c
-
-        JOIN usuario t
-            ON c.tecnico_id = t.id
-
-        JOIN prioridade p
-            ON c.prioridade_id = p.id
-
-        ORDER BY c.id DESC
-
-        LIMIT 5
-    """)
-
-    chamados = cursor.fetchall()
+    conexao.commit()
 
     cursor.close()
     conexao.close()
-
-    return chamados

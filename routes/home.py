@@ -23,7 +23,6 @@ def home():
     abertos = contar_abertos()
     andamento = contar_andamento()
     fechados = contar_fechados()
-
     ultimos_chamados = listar_ultimos_chamados()
 
     return render_template(
