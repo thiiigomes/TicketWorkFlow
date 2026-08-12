@@ -119,47 +119,50 @@ def criar_chamado(
     prioridade_id,
     equipamento_id
 ):
-    
 
     conexao = get_connection()
     cursor = conexao.cursor()
 
     cursor.execute("""
-    INSERT INTO chamado (
+        INSERT INTO chamado (
+            titulo,
+            descricao,
+            status,
+            usuario_id,
+            tecnico_id,
+            categoria_id,
+            prioridade_id,
+            equipamento_id
+        )
+        VALUES (
+            %s,
+            %s,
+            %s,
+            %s,
+            %s,
+            %s,
+            %s,
+            %s
+        )
+    """, (
         titulo,
         descricao,
-        status,
+        "Aberto",
         usuario_id,
         tecnico_id,
         categoria_id,
         prioridade_id,
         equipamento_id
-    )
-    VALUES (
-        %s,
-        %s,
-        %s,
-        %s,
-        %s,
-        %s,
-        %s,
-        %s
-    )
-""", (
-    titulo,
-    descricao,
-    "Aberto",
-    usuario_id,
-    tecnico_id,
-    categoria_id,
-    prioridade_id,
-    equipamento_id
-))
+    ))
 
     conexao.commit()
 
+    chamado_id = cursor.lastrowid
+
     cursor.close()
     conexao.close()
+
+    return chamado_id
 
 def atualizar_chamado(
     chamado_id,
@@ -169,13 +172,170 @@ def atualizar_chamado(
     categoria_id,
     prioridade_id,
     equipamento_id,
-    status
+    status,
+    usuario_id
 ):
 
     conexao = get_connection()
-    cursor = conexao.cursor()
+    cursor = conexao.cursor(dictionary=True)
 
+    # Busca os dados atuais do chamado
     cursor.execute("""
+        SELECT
+            c.titulo,
+            c.descricao,
+            c.tecnico_id,
+            c.categoria_id,
+            c.prioridade_id,
+            c.equipamento_id,
+            c.status,
+            c.data_fechamento,
+
+            t.nome AS tecnico,
+            cat.nome AS categoria,
+            p.nome AS prioridade,
+            CONCAT(e.fabricante, ' ', e.modelo) AS equipamento
+
+        FROM chamado c
+
+        JOIN usuario t
+            ON c.tecnico_id = t.id
+
+        JOIN categoria cat
+            ON c.categoria_id = cat.id
+
+        JOIN prioridade p
+            ON c.prioridade_id = p.id
+
+        JOIN equipamento e
+            ON c.equipamento_id = e.id
+
+        WHERE c.id = %s
+    """, (chamado_id,))
+
+    chamado_atual = cursor.fetchone()
+
+    if not chamado_atual:
+        cursor.close()
+        conexao.close()
+        return
+
+    # Regra de fluxo:
+    # Um chamado Aberto não pode ser fechado diretamente.
+
+    if chamado_atual["status"] == "Aberto" and status == "Fechado":
+
+        cursor.close()
+        conexao.close()
+
+        return False
+
+    alteracoes = []
+    
+    # Título
+    if chamado_atual["titulo"] != titulo:
+
+        alteracoes.append(
+            f'Título: "{chamado_atual["titulo"]}" → "{titulo}"'
+        )
+
+    # Descrição
+    if chamado_atual["descricao"] != descricao:
+
+        alteracoes.append(
+            "Descrição: alterada"
+        )
+
+    # Técnico
+    if chamado_atual["tecnico_id"] != int(tecnico_id):
+
+        cursor.execute("""
+            SELECT nome
+            FROM usuario
+            WHERE id = %s
+        """, (tecnico_id,))
+
+        novo_tecnico = cursor.fetchone()
+
+        if novo_tecnico:
+
+            alteracoes.append(
+                f'Técnico: "{chamado_atual["tecnico"]}" → '
+                f'"{novo_tecnico["nome"]}"'
+            )
+
+    # Categoria
+    if chamado_atual["categoria_id"] != int(categoria_id):
+
+        cursor.execute("""
+            SELECT nome
+            FROM categoria
+            WHERE id = %s
+        """, (categoria_id,))
+
+        nova_categoria = cursor.fetchone()
+
+        if nova_categoria:
+
+            alteracoes.append(
+                f'Categoria: "{chamado_atual["categoria"]}" → '
+                f'"{nova_categoria["nome"]}"'
+            )
+
+    # Prioridade
+    if chamado_atual["prioridade_id"] != int(prioridade_id):
+
+        cursor.execute("""
+            SELECT nome
+            FROM prioridade
+            WHERE id = %s
+        """, (prioridade_id,))
+
+        nova_prioridade = cursor.fetchone()
+
+        if nova_prioridade:
+
+            alteracoes.append(
+                f'Prioridade: "{chamado_atual["prioridade"]}" → '
+                f'"{nova_prioridade["nome"]}"'
+            )
+
+    # Equipamento
+    if chamado_atual["equipamento_id"] != int(equipamento_id):
+
+        cursor.execute("""
+            SELECT CONCAT(fabricante, ' ', modelo) AS equipamento
+            FROM equipamento
+            WHERE id = %s
+        """, (equipamento_id,))
+
+        novo_equipamento = cursor.fetchone()
+
+        if novo_equipamento:
+
+            alteracoes.append(
+                f'Equipamento: "{chamado_atual["equipamento"]}" → '
+                f'"{novo_equipamento["equipamento"]}"'
+            )
+
+    # Status
+    if chamado_atual["status"] != status:
+
+        alteracoes.append(
+            f'Status: "{chamado_atual["status"]}" → "{status}"'
+        )
+
+    # Define a data de fechamento
+    if status == "Fechado":
+
+        data_fechamento_sql = "NOW()"
+
+    else:
+
+        data_fechamento_sql = "NULL"
+
+    # Atualiza o chamado
+    cursor.execute(f"""
         UPDATE chamado
         SET
             titulo = %s,
@@ -184,7 +344,8 @@ def atualizar_chamado(
             categoria_id = %s,
             prioridade_id = %s,
             equipamento_id = %s,
-            status = %s
+            status = %s,
+            data_fechamento = {data_fechamento_sql}
         WHERE id = %s
     """, (
         titulo,
@@ -201,6 +362,20 @@ def atualizar_chamado(
 
     cursor.close()
     conexao.close()
+
+    # Registra as alterações no histórico
+    if alteracoes:
+
+        from models.historico import registrar_historico
+
+        descricao_historico = "\n".join(alteracoes)
+
+        registrar_historico(
+            chamado_id,
+            usuario_id,
+            "Chamado atualizado",
+            descricao_historico
+        )
 
 def buscar_chamado_por_id(chamado_id):
     

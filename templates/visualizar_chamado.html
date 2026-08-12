@@ -6,7 +6,7 @@ Chamado #{{ chamado.id }}
 
 {% block content %}
 
-<div class="card shadow">
+<div class="card shadow border-0">
 
     <div class="card-header bg-primary text-white">
 
@@ -19,30 +19,72 @@ Chamado #{{ chamado.id }}
 
     <div class="card-body">
 
-        <h4>{{ chamado.titulo }}</h4>
+        <div class="d-flex justify-content-between align-items-center">
 
-        <span class="badge bg-success">
-            {{ chamado.status }}
-        </span>
+            <h4 class="fw-bold mb-0">
+                {{ chamado.titulo }}
+            </h4>
+
+            {% if chamado.status == "Aberto" %}
+
+                <span class="badge bg-success">
+                    {{ chamado.status }}
+                </span>
+
+            {% elif chamado.status == "Em andamento" %}
+
+                <span class="badge bg-warning text-dark">
+                    {{ chamado.status }}
+                </span>
+
+            {% elif chamado.status == "Fechado" %}
+
+                <span class="badge bg-secondary">
+                    {{ chamado.status }}
+                </span>
+
+            {% else %}
+
+                <span class="badge bg-primary">
+                    {{ chamado.status }}
+                </span>
+
+            {% endif %}
+
+        </div>
 
         <hr>
 
-        <h5>Descrição</h5>
+        <h5 class="fw-bold">
+            Descrição
+        </h5>
 
-        <p>{{ chamado.descricao }}</p>
+        <p class="text-muted">
+            {{ chamado.descricao }}
+        </p>
 
         <hr>
 
         <div class="row">
 
             <div class="col-md-6">
+
                 <strong>Solicitante:</strong><br>
-                {{ chamado.solicitante }}
+
+                <span class="text-muted">
+                    {{ chamado.solicitante }}
+                </span>
+
             </div>
 
             <div class="col-md-6">
+
                 <strong>Técnico:</strong><br>
-                {{ chamado.tecnico }}
+
+                <span class="text-muted">
+                    {{ chamado.tecnico }}
+                </span>
+
             </div>
 
         </div>
@@ -52,28 +94,170 @@ Chamado #{{ chamado.id }}
         <div class="row">
 
             <div class="col-md-4">
+
                 <strong>Categoria</strong><br>
-                {{ chamado.categoria }}
+
+                <span class="text-muted">
+                    {{ chamado.categoria }}
+                </span>
+
             </div>
 
             <div class="col-md-4">
+
                 <strong>Equipamento</strong><br>
-                {{ chamado.equipamento }}
+
+                <span class="text-muted">
+                    {{ chamado.equipamento }}
+                </span>
+
             </div>
 
             <div class="col-md-4">
+
                 <strong>Prioridade</strong><br>
-                {{ chamado.prioridade }}
+
+                {% if chamado.prioridade == "Alta" %}
+
+                    <span class="badge bg-danger">
+                        Alta
+                    </span>
+
+                {% elif chamado.prioridade == "Média" %}
+
+                    <span class="badge bg-warning text-dark">
+                        Média
+                    </span>
+
+                {% else %}
+
+                    <span class="badge bg-info text-dark">
+                        Baixa
+                    </span>
+
+                {% endif %}
+
             </div>
 
         </div>
 
-        <br>
+        <div class="mt-4">
 
-        <a href="{{ url_for('chamados.chamados') }}" class="btn btn-secondary">
-            <i class="bi bi-arrow-left"></i>
-            Voltar
-        </a>
+            <a href="{{ url_for('chamados.chamados') }}"
+               class="btn btn-outline-secondary">
+
+                <i class="bi bi-arrow-left"></i>
+                Voltar
+
+            </a>
+
+            <a href="{{ url_for('chamados.editar_chamado', chamado_id=chamado.id) }}"
+               class="btn btn-warning">
+
+                <i class="bi bi-pencil"></i>
+                Editar
+
+            </a>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- HISTÓRICO -->
+
+<div class="card shadow border-0 mt-4">
+
+    <div class="card-header bg-white">
+
+        <h5 class="mb-0 fw-bold">
+
+            <i class="bi bi-clock-history"></i>
+
+            Histórico do Chamado
+
+        </h5>
+
+    </div>
+
+    <div class="card-body">
+
+        {% if historico %}
+
+            <div class="list-group list-group-flush">
+
+                {% for item in historico %}
+
+                    <div class="list-group-item px-0">
+
+                        <div class="d-flex justify-content-between">
+
+                            <div>
+
+                                <h6 class="fw-bold mb-1">
+
+                                    <i class="bi bi-circle-fill text-primary"
+                                       style="font-size: 8px;"></i>
+
+                                    {{ item.acao }}
+
+                                </h6>
+
+                                {% if item.descricao %}
+
+                                    <p class="text-muted mb-1">
+
+                                        {{ item.descricao }}
+
+                                    </p>
+
+                                {% endif %}
+
+                                <small class="text-muted">
+
+                                    <i class="bi bi-person"></i>
+
+                                    {{ item.usuario }}
+
+                                </small>
+
+                            </div>
+
+                            <div>
+
+                                <small class="text-muted">
+
+                                    <i class="bi bi-calendar3"></i>
+
+                                    {{ item.data_registro }}
+
+                                </small>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                {% endfor %}
+
+            </div>
+
+        {% else %}
+
+            <div class="text-center text-muted py-4">
+
+                <i class="bi bi-clock-history fs-1"></i>
+
+                <p class="mt-2 mb-0">
+                    Nenhum histórico registrado.
+                </p>
+
+            </div>
+
+        {% endif %}
 
     </div>
 

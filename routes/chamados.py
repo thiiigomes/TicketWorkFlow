@@ -11,6 +11,10 @@ from models.categoria import listar_categorias
 from models.prioridade import listar_prioridades
 from models.equipamento import listar_equipamentos
 from models.usuario import listar_tecnicos
+from models.historico import (
+    registrar_historico,
+    listar_historico_chamado
+)
 
 chamados_bp = Blueprint("chamados", __name__)
 
@@ -59,7 +63,7 @@ def novo_chamado():
 
         usuario_id = session["usuario_id"]
 
-        criar_chamado(
+        chamado_id = criar_chamado(
             titulo,
             descricao,
             usuario_id,
@@ -67,6 +71,13 @@ def novo_chamado():
             categoria_id,
             prioridade_id,
             equipamento_id
+        )
+
+        registrar_historico(
+            chamado_id,
+            usuario_id,
+            "Chamado criado",
+            "O chamado foi criado com sucesso."
         )
 
         return redirect(url_for("chamados.chamados"))
@@ -92,9 +103,12 @@ def visualizar_chamado(chamado_id):
 
     chamado = buscar_chamado_por_id(chamado_id)
 
+    historico = listar_historico_chamado(chamado_id)
+
     return render_template(
         "visualizar_chamado.html",
-        chamado=chamado
+        chamado=chamado,
+        historico=historico
     )
 
 @chamados_bp.route("/chamados/<int:chamado_id>/editar", methods=["GET", "POST"])
@@ -113,7 +127,7 @@ def editar_chamado(chamado_id):
         equipamento_id = request.form["equipamento_id"]
         status = request.form["status"]
 
-        atualizar_chamado(
+        resultado = atualizar_chamado(
             chamado_id,
             titulo,
             descricao,
@@ -121,10 +135,25 @@ def editar_chamado(chamado_id):
             categoria_id,
             prioridade_id,
             equipamento_id,
-            status
+            status,
+            session["usuario_id"]
         )
+        
+        if resultado is False: 
 
-        return redirect(url_for("chamados.visualizar_chamado", chamado_id=chamado_id))
+            return redirect(
+                url_for(
+                    "chamados.editar_chamado",
+                    chamado_id=chamado_id,
+                    erro="fluxo_invalido"
+                )
+            )
+        return redirect(
+            url_for(
+                "chamados.visualizar_chamado", 
+                chamado_id=chamado_id
+            )
+        )
 
     chamado = buscar_chamado_por_id(chamado_id)
 
