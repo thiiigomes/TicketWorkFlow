@@ -521,3 +521,241 @@ def excluir_chamado(chamado_id):
 
     cursor.close()
     conexao.close()
+
+def assumir_chamado(chamado_id, tecnico_id, usuario_id):
+
+    conexao = get_connection()
+    cursor = conexao.cursor(dictionary=True)
+
+    # Busca o chamado atual
+    cursor.execute("""
+        SELECT
+            c.status,
+            c.tecnico_id,
+            t.nome AS tecnico
+
+        FROM chamado c
+
+        LEFT JOIN usuario t
+            ON c.tecnico_id = t.id
+
+        WHERE c.id = %s
+    """, (chamado_id,))
+
+    chamado = cursor.fetchone()
+
+    if not chamado:
+        cursor.close()
+        conexao.close()
+        return False
+
+    # Só chamados abertos podem ser assumidos
+    if chamado["status"] != "Aberto":
+        cursor.close()
+        conexao.close()
+        return False
+
+    # Busca o técnico que está assumindo
+    cursor.execute("""
+        SELECT nome
+        FROM usuario
+        WHERE id = %s
+    """, (tecnico_id,))
+
+    tecnico = cursor.fetchone()
+
+    if not tecnico:
+        cursor.close()
+        conexao.close()
+        return False
+
+    # Atribui o chamado ao técnico e muda o status
+    cursor.execute("""
+        UPDATE chamado
+        SET
+            tecnico_id = %s,
+            status = 'Em andamento'
+        WHERE id = %s
+    """, (
+        tecnico_id,
+        chamado_id
+    ))
+
+    conexao.commit()
+
+    cursor.close()
+    conexao.close()
+
+    # Registra no histórico
+    from models.historico import registrar_historico
+
+    descricao = (
+        f"Chamado assumido pelo técnico "
+        f'"{tecnico["nome"]}". '
+        f'Status: "Aberto" → "Em andamento".'
+    )
+
+    registrar_historico(
+        chamado_id,
+        usuario_id,
+        "Chamado assumido",
+        descricao
+    )
+
+    return True
+
+def transferir_chamado(
+    chamado_id,
+    novo_tecnico_id,
+    usuario_id,
+    motivo
+):
+
+    conexao = get_connection()
+    cursor = conexao.cursor(dictionary=True)
+
+    # Busca o chamado atual
+    cursor.execute("""
+        SELECT
+            c.status,
+            c.tecnico_id,
+            t.nome AS tecnico_atual
+
+        FROM chamado c
+
+        LEFT JOIN usuario t
+            ON c.tecnico_id = t.id
+
+        WHERE c.id = %s
+    """, (chamado_id,))
+
+    chamado = cursor.fetchone()
+
+    if not chamado:
+        cursor.close()
+        conexao.close()
+        return False
+
+    # O chamado precisa estar em andamento
+    if chamado["status"] != "Em andamento":
+        cursor.close()
+        conexao.close()
+        return False
+
+    # Não pode transferir para o mesmo técnico
+    if chamado["tecnico_id"] == int(novo_tecnico_id):
+        cursor.close()
+        conexao.close()
+        return False
+
+    # Busca o novo técnico
+    cursor.execute("""
+        SELECT
+            id,
+            nome
+        FROM usuario
+        WHERE id = %s
+        AND perfil = 'Técnico'
+    """, (novo_tecnico_id,))
+
+    novo_tecnico = cursor.fetchone()
+
+    if not novo_tecnico:
+        cursor.close()
+        conexao.close()
+        return False
+
+    # Atualiza o responsável
+    cursor.execute("""
+        UPDATE chamado
+        SET tecnico_id = %s
+        WHERE id = %s
+    """, (
+        novo_tecnico_id,
+        chamado_id
+    ))
+
+    conexao.commit()
+
+    cursor.close()
+    conexao.close()
+
+    # Registra no histórico
+    from models.historico import registrar_historico
+
+    descricao = (
+        f"Chamado transferido de "
+        f'"{chamado["tecnico_atual"]}" para '
+        f'"{novo_tecnico["nome"]}". '
+        f"Motivo: {motivo}"
+    )
+
+    registrar_historico(
+        chamado_id,
+        usuario_id,
+        "Chamado transferido",
+        descricao
+    )
+
+    return True
+
+def fechar_chamado(
+    chamado_id,
+    usuario_id,
+    solucao
+):
+
+    conexao = get_connection()
+    cursor = conexao.cursor(dictionary=True)
+
+    cursor.execute("""
+        SELECT
+            id,
+            status
+        FROM chamado
+        WHERE id = %s
+    """, (chamado_id,))
+
+    chamado = cursor.fetchone()
+
+    if not chamado:
+        cursor.close()
+        conexao.close()
+        return False
+
+    # Só pode fechar chamados em andamento
+    if chamado["status"] != "Em andamento":
+        cursor.close()
+        conexao.close()
+        return False
+
+    # A solução é obrigatória
+    if not solucao or not solucao.strip():
+        cursor.close()
+        conexao.close()
+        return False
+
+    cursor.execute("""
+        UPDATE chamado
+        SET
+            status = 'Fechado',
+            data_fechamento = NOW()
+        WHERE id = %s
+    """, (chamado_id,))
+
+    conexao.commit()
+
+    cursor.close()
+    conexao.close()
+
+    # Registra a solução no histórico
+    from models.historico import registrar_historico
+
+    registrar_historico(
+        chamado_id,
+        usuario_id,
+        "Chamado fechado",
+        f"Solução registrada: {solucao.strip()}"
+    )
+
+    return True

@@ -1,0 +1,125 @@
+{% extends "layouts/app.html" %}
+
+{% block title %}
+Transferir Chamado
+{% endblock %}
+
+{% block content %}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+
+    <div>
+        <h2 class="fw-bold mb-1">
+            Transferir Chamado #{{ chamado.id }}
+        </h2>
+
+        <p class="text-muted mb-0">
+            Transfira o chamado para outro técnico.
+        </p>
+    </div>
+
+</div>
+
+
+<div class="card shadow border-0">
+
+    <div class="card-body">
+
+        <div class="alert alert-info">
+
+            <i class="bi bi-info-circle"></i>
+
+            <strong>Chamado atual:</strong>
+            {{ chamado.titulo }}
+
+            <br>
+
+            <strong>Técnico atual:</strong>
+            {{ chamado.tecnico }}
+
+        </div>
+
+
+        <form method="POST">
+
+            <div class="mb-3">
+
+                <label class="form-label">
+                    Novo Técnico
+                </label>
+
+                <select
+                    name="tecnico_id"
+                    class="form-select"
+                    required>
+
+                    <option value="">
+                        Selecione um técnico
+                    </option>
+
+                    {% for tecnico in tecnicos %}
+
+                        {% if tecnico.id != chamado.tecnico_id %}
+
+                            <option value="{{ tecnico.id }}">
+                                {{ tecnico.nome }}
+                            </option>
+
+                        {% endif %}
+
+                    {% endfor %}
+
+                </select>
+
+            </div>
+
+
+            <div class="mb-3">
+
+                <label class="form-label">
+                    Motivo da Transferência
+                </label>
+
+                <textarea
+                    name="motivo"
+                    class="form-control"
+                    rows="5"
+                    placeholder="Informe o motivo da transferência..."
+                    required></textarea>
+
+            </div>
+
+
+            <div class="d-flex justify-content-end gap-2 mt-4">
+
+                <a
+                    href="{{ url_for(
+                        'chamados.visualizar_chamado',
+                        chamado_id=chamado.id
+                    ) }}"
+                    class="btn btn-outline-secondary">
+
+                    <i class="bi bi-arrow-left"></i>
+                    Cancelar
+
+                </a>
+
+
+                <button
+                    type="submit"
+                    class="btn btn-primary">
+
+                    <i class="bi bi-arrow-left-right"></i>
+                    Transferir Chamado
+
+                </button>
+
+            </div>
+
+        </form>
+
+    </div>
+
+</div>
+
+{% endblock %}

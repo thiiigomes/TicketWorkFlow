@@ -31,6 +31,32 @@
 
                 {% block content %}
                 {% endblock %}
+                
+                {% with mensagens = get_flashed_messages(with_categories=true) %}
+
+                    {% if mensagens %}
+
+                        {% for categoria, mensagem in mensagens %}
+
+                             <div class="alert alert-{{ categoria }} alert-dismissible fade show" role="alert">
+
+                                 <i class="bi bi-exclamation-triangle"></i>
+
+                                 {{ mensagem }}
+
+                                 <button
+                                     type="button"
+                                     class="btn-close"
+                                     data-bs-dismiss="alert">
+                                 </button>
+
+                             </div>
+
+                        {% endfor %}
+
+                    {% endif %}
+
+                {% endwith %}
 
             </div>
 

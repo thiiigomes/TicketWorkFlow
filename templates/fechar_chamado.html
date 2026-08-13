@@ -1,0 +1,123 @@
+{% extends "layouts/app.html" %}
+
+{% block title %}
+Fechar Chamado #{{ chamado.id }}
+{% endblock %}
+
+{% block content %}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+
+    <div>
+        <h2 class="fw-bold mb-1">
+            Fechar Chamado #{{ chamado.id }}
+        </h2>
+
+        <p class="text-muted mb-0">
+            Registre a solução realizada antes de encerrar o chamado.
+        </p>
+    </div>
+
+</div>
+
+
+<div class="card shadow border-0">
+
+    <div class="card-body">
+
+        <div class="alert alert-warning">
+
+            <i class="bi bi-exclamation-triangle"></i>
+
+            <strong>Atenção:</strong>
+
+            informe detalhadamente a solução aplicada.
+            Essa informação ficará registrada no histórico do chamado.
+
+        </div>
+
+
+        <div class="mb-4">
+
+            <h5 class="fw-bold">
+                {{ chamado.titulo }}
+            </h5>
+
+            <p class="text-muted mb-1">
+
+                <strong>Solicitante:</strong>
+                {{ chamado.solicitante }}
+
+            </p>
+
+            <p class="text-muted mb-0">
+
+                <strong>Técnico responsável:</strong>
+                {{ chamado.tecnico }}
+
+            </p>
+
+        </div>
+
+
+        <form
+            method="POST"
+            action="{{ url_for(
+                'chamados.fechar',
+                chamado_id=chamado.id
+            ) }}"
+        >
+
+            <div class="mb-3">
+
+                <label class="form-label fw-semibold">
+                    Solução do Chamado
+                </label>
+
+                <textarea
+                    name="solucao"
+                    class="form-control"
+                    rows="7"
+                    placeholder="Descreva o problema identificado e a solução aplicada..."
+                    required></textarea>
+
+                <div class="form-text">
+                    Descreva de forma clara o que foi realizado para solucionar o chamado.
+                </div>
+
+            </div>
+
+
+            <div class="d-flex justify-content-end gap-2 mt-4">
+
+                <a
+                    href="{{ url_for(
+                        'chamados.visualizar_chamado',
+                        chamado_id=chamado.id
+                    ) }}"
+                    class="btn btn-outline-secondary">
+
+                    <i class="bi bi-arrow-left"></i>
+                    Cancelar
+
+                </a>
+
+
+                <button
+                    type="submit"
+                    class="btn btn-success">
+
+                    <i class="bi bi-check-circle"></i>
+                    Confirmar Fechamento
+
+                </button>
+
+            </div>
+
+        </form>
+
+    </div>
+
+</div>
+
+{% endblock %}

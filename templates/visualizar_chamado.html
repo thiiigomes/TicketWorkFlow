@@ -143,13 +143,71 @@ Chamado #{{ chamado.id }}
 
         <div class="mt-4">
 
-            <a href="{{ url_for('chamados.chamados') }}"
-               class="btn btn-outline-secondary">
+            <div class="d-flex justify-content-between align-items-center mt-4">
 
-                <i class="bi bi-arrow-left"></i>
-                Voltar
+                <a href="{{ url_for('chamados.chamados') }}"
+                    class="btn btn-secondary">
 
-            </a>
+                    <i class="bi bi-arrow-left"></i>
+                     Voltar
+
+                </a>
+
+
+                {% if usuario.perfil in ["Técnico", "Administrador"] %}
+
+                    {% if chamado.status == "Aberto" %}
+
+                        <form method="POST"
+                            action="{{ url_for('chamados.assumir', chamado_id=chamado.id) }}"
+                            class="m-0">
+
+                            <button
+                                type="submit"
+                                class="btn btn-primary">
+
+                                <i class="bi bi-person-check"></i>
+                                Assumir Chamado
+
+                            </button>
+
+                        </form>
+
+                    {% elif chamado.status == "Em andamento" %}
+
+                        <div class="d-flex gap-2">
+
+                             <a
+                                 href="{{ url_for(
+                                     'chamados.transferir',
+                                     chamado_id=chamado.id
+                                 ) }}"
+                                class="btn btn-warning">
+
+                                 <i class="bi bi-arrow-left-right"></i>
+                                Transferir Chamado
+
+                            </a>
+
+                            <a
+                                href="{{ url_for(
+                                    'chamados.fechar',
+                                    chamado_id=chamado.id
+                                 ) }}"
+                                class="btn btn-success">
+
+                                <i class="bi bi-check-circle"></i>
+                                Fechar Chamado
+
+                            </a>
+
+                        </div>
+
+                     {% endif %}
+
+                {% endif %}
+
+            </div>
 
             <a href="{{ url_for('chamados.editar_chamado', chamado_id=chamado.id) }}"
                class="btn btn-warning">
@@ -188,52 +246,84 @@ Chamado #{{ chamado.id }}
 
             <div class="list-group list-group-flush">
 
-                {% for item in historico %}
+               {% for item in historico %}
 
-                    <div class="list-group-item px-0">
+                    <div class="position-relative ps-4 pb-4">
 
-                        <div class="d-flex justify-content-between">
-
-                            <div>
-
-                                <h6 class="fw-bold mb-1">
-
-                                    <i class="bi bi-circle-fill text-primary"
-                                       style="font-size: 8px;"></i>
-
-                                    {{ item.acao }}
-
-                                </h6>
-
-                                {% if item.descricao %}
-
-                                    <p class="text-muted mb-1">
-
-                                        {{ item.descricao }}
-
-                                    </p>
-
-                                {% endif %}
-
-                                <small class="text-muted">
-
-                                    <i class="bi bi-person"></i>
-
-                                    {{ item.usuario }}
-
-                                </small>
-
+                         <!-- Linha da timeline -->
+                         {% if not loop.last %}
+                            <div
+                                class="position-absolute"
+                                style="
+                                    left: 7px;
+                                    top: 12px;
+                                    bottom: 0;
+                                    width: 2px;
+                                    background-color: #dee2e6;
+                                ">
                             </div>
+                        {% endif %}
 
-                            <div>
 
-                                <small class="text-muted">
+                        <!-- Marcador -->
+                        <div
+                            class="position-absolute rounded-circle bg-primary"
+                            style="
+                                width: 15px;
+                                height: 15px;
+                                left: 0;
+                                top: 5px;
+                                border: 3px solid #fff;
+                                box-shadow: 0 0 0 1px #0d6efd;
+                            ">
+                        </div>
 
-                                    <i class="bi bi-calendar3"></i>
 
-                                    {{ item.data_registro }}
+                        <!-- Conteúdo -->
+                        <div class="card border-0 shadow-sm">
 
-                                </small>
+                            <div class="card-body py-3">
+
+                                <div class="d-flex justify-content-between align-items-start">
+
+                                    <div>
+
+                                         <h6 class="fw-bold mb-1">
+
+                                            {{ item.acao }}
+
+                                         </h6>
+
+                                         {% if item.descricao %}
+
+                                            <p class="text-muted mb-2">
+
+                                                 {{ item.descricao }}
+
+                                            </p>
+
+                                        {% endif %}
+
+                                        <small class="text-muted">
+
+                                            <i class="bi bi-person"></i>
+
+                                            {{ item.usuario }}
+
+                                        </small>
+
+                                    </div>
+
+
+                                    <small class="text-muted text-nowrap ms-3">
+
+                                        <i class="bi bi-calendar3"></i>
+
+                                        {{ item.data_registro }}
+
+                                    </small>
+
+                                </div>
 
                             </div>
 

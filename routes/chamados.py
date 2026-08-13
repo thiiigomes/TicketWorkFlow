@@ -1,16 +1,22 @@
-from flask import Blueprint, render_template, session, redirect, url_for, request
+from flask import Blueprint, render_template, session, redirect, url_for, request, flash
 
 from models.chamado import (
     listar_chamados,
     criar_chamado,
     buscar_chamado_por_id,
     atualizar_chamado,
-    excluir_chamado
+    excluir_chamado,
+    assumir_chamado,
+    transferir_chamado,
+    fechar_chamado
 )
 from models.categoria import listar_categorias
 from models.prioridade import listar_prioridades
 from models.equipamento import listar_equipamentos
-from models.usuario import listar_tecnicos
+from models.usuario import ( 
+    listar_tecnicos,
+    buscar_usuario_por_id
+)
 from models.historico import (
     registrar_historico,
     listar_historico_chamado
@@ -105,10 +111,318 @@ def visualizar_chamado(chamado_id):
 
     historico = listar_historico_chamado(chamado_id)
 
+    usuario = buscar_usuario_por_id(session["usuario_id"])
+
     return render_template(
         "visualizar_chamado.html",
         chamado=chamado,
-        historico=historico
+        historico=historico,
+        usuario=usuario
+    )
+
+
+@chamados_bp.route("/chamados/<int:chamado_id>/assumir", methods=["POST"])
+def assumir(chamado_id):
+
+    if "usuario_id" not in session:
+        return redirect(url_for("auth.login"))
+
+    usuario_id = session["usuario_id"]
+
+    # Busca o usuário logado
+    usuario = buscar_usuario_por_id(usuario_id)
+
+    # Verifica se o usuário existe
+    if not usuario:
+
+        flash(
+            "Usuário não encontrado.",
+            "danger"
+        )
+
+        return redirect(
+            url_for(
+                "chamados.visualizar_chamado",
+                chamado_id=chamado_id
+            )
+        )
+
+    # Apenas técnicos podem assumir chamados
+    if usuario["perfil"] not in ["Técnico", "Administrador"]:
+
+        flash(
+            "Apenas Técnicos ou Administradores podem assumir chamados.",
+            "warning"
+        )
+
+        return redirect(
+            url_for(
+                "chamados.visualizar_chamado",
+                chamado_id=chamado_id
+            )
+        )
+
+    resultado = assumir_chamado(
+        chamado_id,
+        usuario_id,
+        usuario_id
+    )
+
+    if resultado is False:
+
+        flash(
+            "Este chamado não pode ser assumido. "
+            "Verifique se ele ainda está Aberto.",
+            "warning"
+        )
+
+        return redirect(
+            url_for(
+                "chamados.visualizar_chamado",
+                chamado_id=chamado_id
+            )
+        )
+
+    flash(
+        "Chamado assumido com sucesso!",
+        "success"
+    )
+
+    return redirect(
+        url_for(
+            "chamados.visualizar_chamado",
+            chamado_id=chamado_id
+        )
+    )
+
+@chamados_bp.route(
+    "/chamados/<int:chamado_id>/transferir",
+    methods=["GET", "POST"]
+)
+def transferir(chamado_id):
+
+    if "usuario_id" not in session:
+        return redirect(url_for("auth.login"))
+
+    usuario_id = session["usuario_id"]
+
+    usuario = buscar_usuario_por_id(usuario_id)
+
+    # Apenas Técnico ou Administrador pode transferir
+    if not usuario or usuario["perfil"] not in ["Técnico", "Administrador"]:
+
+        flash(
+            "Apenas Técnicos ou Administradores podem transferir chamados.",
+            "warning"
+        )
+
+        return redirect(
+            url_for(
+                "chamados.visualizar_chamado",
+                chamado_id=chamado_id
+            )
+        )
+
+    chamado = buscar_chamado_por_id(chamado_id)
+
+    if not chamado:
+
+        flash(
+            "Chamado não encontrado.",
+            "danger"
+        )
+
+        return redirect(
+            url_for("chamados.chamados")
+        )
+
+    # O chamado precisa estar em andamento
+    if chamado["status"] != "Em andamento":
+
+        flash(
+            "Somente chamados Em andamento podem ser transferidos.",
+            "warning"
+        )
+
+        return redirect(
+            url_for(
+                "chamados.visualizar_chamado",
+                chamado_id=chamado_id
+            )
+        )
+
+    if request.method == "POST":
+
+        novo_tecnico_id = request.form["tecnico_id"]
+        motivo = request.form["motivo"].strip()
+
+        if not motivo:
+
+            flash(
+                "Informe o motivo da transferência.",
+                "warning"
+            )
+
+            return redirect(
+                url_for(
+                    "chamados.transferir",
+                    chamado_id=chamado_id
+                )
+            )
+
+        resultado = transferir_chamado(
+            chamado_id,
+            novo_tecnico_id,
+            usuario_id,
+            motivo
+        )
+
+        if resultado is False:
+
+            flash(
+                "Não foi possível transferir o chamado. "
+                "Verifique o técnico selecionado.",
+                "warning"
+            )
+
+            return redirect(
+                url_for(
+                    "chamados.transferir",
+                    chamado_id=chamado_id
+                )
+            )
+
+        flash(
+            "Chamado transferido com sucesso!",
+            "success"
+        )
+
+        return redirect(
+            url_for(
+                "chamados.visualizar_chamado",
+                chamado_id=chamado_id
+            )
+        )
+
+    tecnicos = listar_tecnicos()
+
+    return render_template(
+        "transferir_chamado.html",
+        chamado=chamado,
+        tecnicos=tecnicos
+    )
+
+@chamados_bp.route(
+    "/chamados/<int:chamado_id>/fechar",
+    methods=["GET", "POST"]
+)
+def fechar(chamado_id):
+
+    if "usuario_id" not in session:
+        return redirect(url_for("auth.login"))
+
+    usuario_id = session["usuario_id"]
+
+    usuario = buscar_usuario_por_id(usuario_id)
+
+    # Apenas Técnico ou Administrador pode fechar
+    if not usuario or usuario["perfil"] not in ["Técnico", "Administrador"]:
+
+        flash(
+            "Apenas Técnicos ou Administradores podem fechar chamados.",
+            "warning"
+        )
+
+        return redirect(
+            url_for(
+                "chamados.visualizar_chamado",
+                chamado_id=chamado_id
+            )
+        )
+
+    chamado = buscar_chamado_por_id(chamado_id)
+
+    if not chamado:
+
+        flash(
+            "Chamado não encontrado.",
+            "danger"
+        )
+
+        return redirect(
+            url_for("chamados.chamados")
+        )
+
+    # Só pode fechar chamado Em andamento
+    if chamado["status"] != "Em andamento":
+
+        flash(
+            "Somente chamados Em andamento podem ser fechados.",
+            "warning"
+        )
+
+        return redirect(
+            url_for(
+                "chamados.visualizar_chamado",
+                chamado_id=chamado_id
+            )
+        )
+
+    # GET → abre a tela de fechamento
+    if request.method == "GET":
+
+        return render_template(
+            "fechar_chamado.html",
+            chamado=chamado
+        )
+
+    # POST → recebe a solução
+    solucao = request.form.get("solucao", "").strip()
+
+    if not solucao:
+
+        flash(
+            "Informe a solução do chamado antes de fechá-lo.",
+            "warning"
+        )
+
+        return redirect(
+            url_for(
+                "chamados.fechar",
+                chamado_id=chamado_id
+            )
+        )
+
+    resultado = fechar_chamado(
+        chamado_id,
+        usuario_id,
+        solucao
+    )
+
+    if resultado is False:
+
+        flash(
+            "Não foi possível fechar o chamado.",
+            "warning"
+        )
+
+        return redirect(
+            url_for(
+                "chamados.visualizar_chamado",
+                chamado_id=chamado_id
+            )
+        )
+
+    flash(
+        "Chamado fechado com sucesso!",
+        "success"
+    )
+
+    return redirect(
+        url_for(
+            "chamados.visualizar_chamado",
+            chamado_id=chamado_id
+        )
     )
 
 @chamados_bp.route("/chamados/<int:chamado_id>/editar", methods=["GET", "POST"])
@@ -141,12 +455,10 @@ def editar_chamado(chamado_id):
         
         if resultado is False: 
 
-            return redirect(
-                url_for(
-                    "chamados.editar_chamado",
-                    chamado_id=chamado_id,
-                    erro="fluxo_invalido"
-                )
+            flash(
+                "Não é possível fechar um chamado que ainda está aberto."
+                "O chamado precisa estar Em andamento antes de ser fechado.",
+                "warning"
             )
         return redirect(
             url_for(
