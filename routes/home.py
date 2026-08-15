@@ -52,6 +52,9 @@ def usuarios():
     if "usuario_id" not in session:
         return redirect(url_for("auth.login"))
 
+    if session.get("perfil") != "Administrador":
+        return redirect(url_for("home.home"))
+
     usuarios = listar_usuarios()
 
     return render_template(

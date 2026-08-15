@@ -33,6 +33,8 @@
 
         </li>
 
+        {% if session["perfil"] == "Administrador" %}
+
         <li class="nav-item mb-2">
 
             <a href="{{ url_for('home.usuarios') }}"
@@ -45,6 +47,8 @@
             </a>
 
         </li>
+
+        {% endif %}
 
     </ul>
 
