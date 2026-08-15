@@ -9,17 +9,11 @@ body{
 
     background:#f4f6f9;
 
-    display:flex;
-
-    justify-content:center;
-
-    align-items:center;
-
-    height:100vh;
+    min-height: 100vh;
 
 }
 
-.container{
+.login-container-box{
 
     background:white;
 
@@ -260,4 +254,26 @@ td{
 .card:hover {
     transform: translateY(-6px);
     box-shadow: 0 .7rem 1.5rem rgba(0,0,0,.18) !important;
+}
+
+/* ---------- LAYOUT DO SISTEMA ---------- */
+
+.min-width-0 {
+    min-width: 0;
+}
+
+/* Evita que tabelas estourem o conteúdo */
+
+.table-responsive {
+    max-width: 100%;
+}
+
+/* Ajuste para telas menores */
+
+@media (max-width: 991.98px) {
+
+    .dashboard {
+        padding: 20px;
+    }
+
 }

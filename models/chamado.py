@@ -759,3 +759,26 @@ def fechar_chamado(
     )
 
     return True
+
+def contar_por_prioridade():
+
+    conexao = get_connection()
+    cursor = conexao.cursor(dictionary=True)
+
+    cursor.execute("""
+        SELECT
+            p.nome AS prioridade,
+            COUNT(c.id) AS total
+        FROM prioridade p
+        LEFT JOIN chamado c
+            ON c.prioridade_id = p.id
+        GROUP BY p.id, p.nome
+        ORDER BY p.id
+    """)
+
+    prioridades = cursor.fetchall()
+
+    cursor.close()
+    conexao.close()
+
+    return prioridades

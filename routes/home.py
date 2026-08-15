@@ -7,7 +7,8 @@ from models.chamado import (
     contar_abertos,
     contar_andamento,
     contar_fechados,
-    listar_ultimos_chamados
+    listar_ultimos_chamados,
+    contar_por_prioridade
 )
 
 home_bp = Blueprint("home", __name__)
@@ -23,7 +24,14 @@ def home():
     abertos = contar_abertos()
     andamento = contar_andamento()
     fechados = contar_fechados()
+    prioridades = contar_por_prioridade()
     ultimos_chamados = listar_ultimos_chamados()
+    
+    status_chamados = {
+        "Abertos": abertos,
+        "Em andamento": andamento,
+        "Fechados": fechados
+    }
 
     return render_template(
     "dashboard.html",
@@ -32,6 +40,8 @@ def home():
     abertos=abertos,
     andamento=andamento,
     fechados=fechados,
+    prioridades=prioridades,
+    status_chamados=status_chamados,
     ultimos_chamados=ultimos_chamados
     )
 
