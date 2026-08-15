@@ -772,8 +772,14 @@ def contar_por_prioridade():
         FROM prioridade p
         LEFT JOIN chamado c
             ON c.prioridade_id = p.id
-        GROUP BY p.id, p.nome
-        ORDER BY p.id
+        WHERE p.nome IN ('Alta', 'Média', 'Baixa')
+        GROUP BY p.nome
+        ORDER BY
+            CASE p.nome
+                WHEN 'Alta' THEN 1
+                WHEN 'Média' THEN 2
+                WHEN 'Baixa' THEN 3
+            END
     """)
 
     prioridades = cursor.fetchall()
