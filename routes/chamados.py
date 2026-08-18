@@ -431,6 +431,49 @@ def editar_chamado(chamado_id):
     if "usuario_id" not in session:
         return redirect(url_for("auth.login"))
 
+    usuario = buscar_usuario_por_id(session["usuario_id"])
+
+    # Apenas Técnico ou Administrador pode editar chamados
+    if not usuario or usuario["perfil"] not in ["Técnico", "Administrador"]:
+
+        flash(
+            "Apenas Técnicos ou Administradores podem atualizar chamados.",
+            "warning"
+        )
+
+        return redirect(
+            url_for(
+                "chamados.visualizar_chamado",
+                chamado_id=chamado_id
+            )
+        )
+
+    chamado = buscar_chamado_por_id(chamado_id)
+
+    if not chamado:
+
+        flash(
+            "Chamado não encontrado.",
+            "danger"
+        )
+
+        return redirect(url_for("chamados.chamados"))
+
+    # Chamados fechados não podem mais ser alterados
+    if chamado["status"] == "Fechado":
+
+        flash(
+            "Este chamado está fechado e não pode mais ser alterado.",
+            "warning"
+        )
+
+        return redirect(
+            url_for(
+                "chamados.visualizar_chamado",
+                chamado_id=chamado_id
+            )
+        )
+
     if request.method == "POST":
 
         titulo = request.form["titulo"]
@@ -452,22 +495,32 @@ def editar_chamado(chamado_id):
             status,
             session["usuario_id"]
         )
-        
-        if resultado is False: 
+
+        if resultado is False:
 
             flash(
-                "Não é possível fechar um chamado que ainda está aberto."
-                "O chamado precisa estar Em andamento antes de ser fechado.",
+                "Não foi possível atualizar o chamado.",
                 "warning"
             )
+
+            return redirect(
+                url_for(
+                    "chamados.visualizar_chamado",
+                    chamado_id=chamado_id
+                )
+            )
+
+        flash(
+            "Chamado atualizado com sucesso!",
+            "success"
+        )
+
         return redirect(
             url_for(
-                "chamados.visualizar_chamado", 
+                "chamados.visualizar_chamado",
                 chamado_id=chamado_id
             )
         )
-
-    chamado = buscar_chamado_por_id(chamado_id)
 
     categorias = listar_categorias()
     prioridades = listar_prioridades()

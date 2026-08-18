@@ -162,14 +162,18 @@ Chamado #{{ chamado.id }}
                             action="{{ url_for('chamados.assumir', chamado_id=chamado.id) }}"
                             class="m-0">
 
-                            <button
-                                type="submit"
-                                class="btn btn-primary">
+                            {% if chamado.status == "Aberto" %}
 
-                                <i class="bi bi-person-check"></i>
-                                Assumir Chamado
+                                <button
+                                    type="submit"
+                                    class="btn btn-primary">
 
-                            </button>
+                                    <i class="bi bi-person-check"></i>
+                                    Assumir Chamado
+
+                                </button>
+
+                            {% endif %}
 
                         </form>
 
@@ -177,29 +181,37 @@ Chamado #{{ chamado.id }}
 
                         <div class="d-flex gap-2">
 
-                             <a
-                                 href="{{ url_for(
-                                     'chamados.transferir',
-                                     chamado_id=chamado.id
-                                 ) }}"
-                                class="btn btn-warning">
+                            {% if chamado.status != "Fechado" %}
 
-                                 <i class="bi bi-arrow-left-right"></i>
-                                Transferir Chamado
+                                <a
+                                    href="{{ url_for(
+                                        'chamados.transferir',
+                                        chamado_id=chamado.id
+                                    ) }}"
+                                    class="btn btn-warning">
 
-                            </a>
+                                    <i class="bi bi-arrow-left-right"></i>
+                                    Transferir Chamado
 
-                            <a
-                                href="{{ url_for(
-                                    'chamados.fechar',
-                                    chamado_id=chamado.id
-                                 ) }}"
-                                class="btn btn-success">
+                                 </a>
 
-                                <i class="bi bi-check-circle"></i>
-                                Fechar Chamado
+                            {% endif %}
 
-                            </a>
+                            {% if chamado.status == "Em andamento" %}
+
+                                <a
+                                    href="{{ url_for(
+                                        'chamados.fechar',
+                                        chamado_id=chamado.id
+                                    ) }}"
+                                    class="btn btn-success">
+
+                                    <i class="bi bi-check-circle"></i>
+                                    Fechar Chamado
+
+                                </a>
+
+                            {% endif %}
 
                         </div>
 
@@ -209,13 +221,17 @@ Chamado #{{ chamado.id }}
 
             </div>
 
-            <a href="{{ url_for('chamados.editar_chamado', chamado_id=chamado.id) }}"
-               class="btn btn-warning">
+           {% if chamado.status != "Fechado" %}
 
-                <i class="bi bi-pencil"></i>
-                Editar
+                <a href="{{ url_for('chamados.editar_chamado', chamado_id=chamado.id) }}"
+                     class="btn btn-warning">
 
-            </a>
+                    <i class="bi bi-pencil"></i>
+                     Editar
+
+                 </a>
+
+            {% endif %}
 
         </div>
 
