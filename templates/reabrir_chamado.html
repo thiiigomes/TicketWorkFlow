@@ -1,0 +1,102 @@
+{% extends "layouts/app.html" %}
+
+{% block title %}
+Reabrir Chamado
+{% endblock %}
+
+{% block content %}
+
+<div class="container-fluid">
+
+    <div class="mb-4">
+
+        <h1 class="fw-bold">
+            <i class="bi bi-arrow-counterclockwise text-primary"></i>
+            Reabrir Chamado
+        </h1>
+
+        <p class="text-muted">
+            Informe o motivo pelo qual este chamado precisa ser reaberto.
+        </p>
+
+    </div>
+
+    <div class="card shadow border-0">
+
+        <div class="card-body">
+
+            <div class="mb-4">
+
+                <h5 class="fw-bold">
+                    Chamado #{{ chamado.id }}
+                </h5>
+
+                <p class="mb-1">
+                    <strong>Título:</strong>
+                    {{ chamado.titulo }}
+                </p>
+
+                <p class="mb-0">
+
+                    <strong>Status atual:</strong>
+
+                    <span class="badge bg-secondary">
+                        {{ chamado.status }}
+                    </span>
+
+                </p>
+
+            </div>
+
+            <form method="POST">
+
+                <div class="mb-4">
+
+                    <label for="motivo" class="form-label fw-bold">
+                        Motivo da reabertura
+                    </label>
+
+                    <textarea
+                        name="motivo"
+                        id="motivo"
+                        class="form-control"
+                        rows="5"
+                        placeholder="Informe o motivo da reabertura..."
+                        required></textarea>
+
+                </div>
+
+                <div class="d-flex gap-2">
+
+                    <button
+                        type="submit"
+                        class="btn btn-primary">
+
+                        <i class="bi bi-arrow-counterclockwise"></i>
+                        Reabrir Chamado
+
+                    </button>
+
+                    <a
+                        href="{{ url_for(
+                            'chamados.visualizar_chamado',
+                            chamado_id=chamado.id
+                        ) }}"
+                        class="btn btn-secondary">
+
+                        <i class="bi bi-x-circle"></i>
+                        Cancelar
+
+                    </a>
+
+                </div>
+
+            </form>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

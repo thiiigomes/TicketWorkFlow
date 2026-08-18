@@ -8,7 +8,8 @@ from models.chamado import (
     excluir_chamado,
     assumir_chamado,
     transferir_chamado,
-    fechar_chamado
+    fechar_chamado,
+    reabrir_chamado
 )
 from models.categoria import listar_categorias
 from models.prioridade import listar_prioridades
@@ -423,6 +424,91 @@ def fechar(chamado_id):
             "chamados.visualizar_chamado",
             chamado_id=chamado_id
         )
+    )
+
+@chamados_bp.route("/chamados/<int:chamado_id>/reabrir", methods=["GET", "POST"])
+def reabrir(chamado_id):
+
+    if "usuario_id" not in session:
+        return redirect(url_for("auth.login"))
+
+    chamado = buscar_chamado_por_id(chamado_id)
+
+    if not chamado:
+
+        flash(
+            "Chamado não encontrado.",
+            "danger"
+        )
+
+        return redirect(url_for("chamados.chamados"))
+
+    # Só permite reabrir chamados fechados
+    if chamado["status"] != "Fechado":
+
+        flash(
+            "Somente chamados fechados podem ser reabertos.",
+            "warning"
+        )
+
+        return redirect(
+            url_for(
+                "chamados.visualizar_chamado",
+                chamado_id=chamado_id
+            )
+        )
+
+    if request.method == "POST":
+
+        motivo = request.form.get("motivo", "").strip()
+
+        if not motivo:
+
+            flash(
+                "Informe o motivo da reabertura.",
+                "warning"
+            )
+
+            return render_template(
+                "reabrir_chamado.html",
+                chamado=chamado
+            )
+
+        resultado = reabrir_chamado(
+            chamado_id,
+            session["usuario_id"],
+            motivo
+        )
+
+        if not resultado:
+
+            flash(
+                "Não foi possível reabrir o chamado.",
+                "danger"
+            )
+
+            return redirect(
+                url_for(
+                    "chamados.visualizar_chamado",
+                    chamado_id=chamado_id
+                )
+            )
+
+        flash(
+            "Chamado reaberto com sucesso!",
+            "success"
+        )
+
+        return redirect(
+            url_for(
+                "chamados.visualizar_chamado",
+                chamado_id=chamado_id
+            )
+        )
+
+    return render_template(
+        "reabrir_chamado.html",
+        chamado=chamado
     )
 
 @chamados_bp.route("/chamados/<int:chamado_id>/editar", methods=["GET", "POST"])

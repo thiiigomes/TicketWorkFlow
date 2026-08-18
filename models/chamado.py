@@ -760,6 +760,63 @@ def fechar_chamado(
 
     return True
 
+def reabrir_chamado(chamado_id, usuario_id, motivo):
+
+    conexao = get_connection()
+    cursor = conexao.cursor(dictionary=True)
+
+    cursor.execute("""
+        SELECT
+            id,
+            status
+        FROM chamado
+        WHERE id = %s
+    """, (chamado_id,))
+
+    chamado = cursor.fetchone()
+
+    if not chamado:
+        cursor.close()
+        conexao.close()
+        return False
+
+    # Só pode reabrir chamados fechados
+    if chamado["status"] != "Fechado":
+        cursor.close()
+        conexao.close()
+        return False
+
+    # O motivo é obrigatório
+    if not motivo or not motivo.strip():
+        cursor.close()
+        conexao.close()
+        return False
+
+    cursor.execute("""
+        UPDATE chamado
+        SET
+            status = 'Em andamento',
+            data_fechamento = NULL
+        WHERE id = %s
+    """, (chamado_id,))
+
+    conexao.commit()
+
+    cursor.close()
+    conexao.close()
+
+    # Registra a reabertura no histórico
+    from models.historico import registrar_historico
+
+    registrar_historico(
+        chamado_id,
+        usuario_id,
+        "Chamado reaberto",
+        f"Motivo da reabertura: {motivo.strip()}"
+    )
+
+    return True
+
 def contar_por_prioridade():
 
     conexao = get_connection()

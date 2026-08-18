@@ -214,8 +214,22 @@ Chamado #{{ chamado.id }}
                             {% endif %}
 
                         </div>
+                        
+                    {% elif chamado.status == "Fechado" %}
 
-                     {% endif %}
+                        <a
+                             href="{{ url_for(
+                                'chamados.reabrir',
+                                chamado_id=chamado.id
+                            ) }}"
+                            class="btn btn-primary">
+
+                            <i class="bi bi-arrow-counterclockwise"></i>
+                            Reabrir Chamado
+
+                        </a>
+
+                    {% endif %} 
 
                 {% endif %}
 
