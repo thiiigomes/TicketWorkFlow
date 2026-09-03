@@ -768,7 +768,8 @@ def reabrir_chamado(chamado_id, usuario_id, motivo):
     cursor.execute("""
         SELECT
             id,
-            status
+            status,
+            tecnico_id
         FROM chamado
         WHERE id = %s
     """, (chamado_id,))
@@ -805,8 +806,8 @@ def reabrir_chamado(chamado_id, usuario_id, motivo):
     cursor.close()
     conexao.close()
 
-    # Registra a reabertura no histórico
     from models.historico import registrar_historico
+    from models.notificacao import criar_notificacao
 
     registrar_historico(
         chamado_id,
@@ -814,6 +815,16 @@ def reabrir_chamado(chamado_id, usuario_id, motivo):
         "Chamado reaberto",
         f"Motivo da reabertura: {motivo.strip()}"
     )
+
+    # Cria notificação para o técnico responsável
+    if chamado["tecnico_id"]:
+
+        criar_notificacao(
+            chamado["tecnico_id"],
+            chamado_id,
+            f"O chamado #{chamado_id} foi reaberto. "
+            f"Motivo: {motivo.strip()}"
+        )
 
     return True
 

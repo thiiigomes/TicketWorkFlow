@@ -33,6 +33,26 @@
 
         </li>
 
+        <li class="nav-item mb-2">
+            <a href="{{ url_for('notificacoes.notificacoes') }}"
+                class="nav-link text-white d-flex justify-content-between align-items-center">
+
+                <span>
+                    <i class="bi bi-bell-fill"></i>
+                     Notificações
+                </span>
+
+                {% if total_notificacoes_nao_lidas > 0 %}
+
+                     <span class="badge bg-danger rounded-pill">
+                        {{ total_notificacoes_nao_lidas }}
+                    </span>
+
+                {% endif %}
+
+            </a>
+        </li>
+
         {% if session["perfil"] == "Administrador" %}
 
         <li class="nav-item mb-2">
