@@ -691,10 +691,20 @@ def transferir_chamado(
     )
 
     registrar_historico(
-        chamado_id,
-        usuario_id,
-        "Chamado transferido",
-        descricao
+    chamado_id,
+    usuario_id,
+    "Chamado transferido",
+    descricao
+    )
+
+    # Cria uma notificação para o novo técnico responsável
+    from models.notificacao import criar_notificacao
+
+    criar_notificacao(
+    novo_tecnico_id,
+    chamado_id,
+    f"O chamado #{chamado_id} foi transferido para você. "
+    f"Motivo: {motivo}"
     )
 
     return True
@@ -711,7 +721,8 @@ def fechar_chamado(
     cursor.execute("""
         SELECT
             id,
-            status
+            status,
+            usuario_id
         FROM chamado
         WHERE id = %s
     """, (chamado_id,))
@@ -750,12 +761,21 @@ def fechar_chamado(
 
     # Registra a solução no histórico
     from models.historico import registrar_historico
+    from models.notificacao import criar_notificacao
 
     registrar_historico(
         chamado_id,
         usuario_id,
         "Chamado fechado",
         f"Solução registrada: {solucao.strip()}"
+    )
+
+    # Cria uma notificação para o solicitante
+    criar_notificacao(
+        chamado["usuario_id"],
+        chamado_id,
+        f"O chamado #{chamado_id} foi fechado. "
+        f"Solução: {solucao.strip()}"
     )
 
     return True
