@@ -54,13 +54,26 @@ Notificações
                             </p>
 
                             <small class="text-muted">
+
                                 <i class="bi bi-ticket"></i>
-                                Chamado #{{ notificacao.chamado_id }}
+
+                                <a
+                                    href="{{ url_for(
+                                        'notificacoes.abrir_notificacao',
+                                        notificacao_id=notificacao.id
+                                    ) }}"
+                                    class="text-decoration-none">
+
+                                    Chamado #{{ notificacao.chamado_id }}
+
+                                </a>
 
                                 &nbsp; • &nbsp;
 
                                 <i class="bi bi-calendar3"></i>
+
                                 {{ notificacao.data_criacao }}
+
                             </small>
                             
                             {% if not notificacao.lida %}

@@ -1,4 +1,8 @@
 from flask import Blueprint, render_template, session, redirect, url_for, request, flash
+from models.comentario import (
+    listar_comentarios,
+    criar_comentario
+)
 
 from models.chamado import (
     listar_chamados,
@@ -11,13 +15,16 @@ from models.chamado import (
     fechar_chamado,
     reabrir_chamado
 )
+
 from models.categoria import listar_categorias
 from models.prioridade import listar_prioridades
 from models.equipamento import listar_equipamentos
+
 from models.usuario import ( 
     listar_tecnicos,
     buscar_usuario_por_id
 )
+
 from models.historico import (
     registrar_historico,
     listar_historico_chamado
@@ -35,12 +42,15 @@ def chamados():
     status = request.args.get("status", "")
     prioridade = request.args.get("prioridade", "")
     tecnico = request.args.get("tecnico", "")
+    usuario = buscar_usuario_por_id(session["usuario_id"])
 
     chamados = listar_chamados(
         pesquisa,
         status,
         prioridade,
-        tecnico
+        tecnico,
+        session["usuario_id"],
+        usuario["perfil"]
     )
 
     return render_template(
@@ -49,7 +59,8 @@ def chamados():
         pesquisa=pesquisa,
         status=status,
         prioridade=prioridade,
-        tecnico=tecnico
+        tecnico=tecnico,
+        usuario=buscar_usuario_por_id(session["usuario_id"])
     )
 
 @chamados_bp.route("/chamados/novo", methods=["GET", "POST"])
@@ -57,6 +68,16 @@ def novo_chamado():
 
     if "usuario_id" not in session:
         return redirect(url_for("auth.login"))
+    
+    usuario = buscar_usuario_por_id(session["usuario_id"])
+
+    if not usuario:
+        flash("Usuário não encontrado.", "danger")
+        return redirect(url_for("chamados.chamados"))
+
+    if usuario["perfil"] == "Técnico":
+        flash("Técnicos não podem abrir chamados.", "warning")
+        return redirect(url_for("chamados.chamados"))
 
     if request.method == "POST":
 
@@ -104,23 +125,110 @@ def novo_chamado():
 
 @chamados_bp.route("/chamados/<int:chamado_id>")
 def visualizar_chamado(chamado_id):
-
     if "usuario_id" not in session:
         return redirect(url_for("auth.login"))
 
+    usuario = buscar_usuario_por_id(session["usuario_id"])
     chamado = buscar_chamado_por_id(chamado_id)
 
-    historico = listar_historico_chamado(chamado_id)
+    if not chamado:
+        flash("Chamado não encontrado.", "danger")
+        return redirect(url_for("chamados.chamados"))
 
-    usuario = buscar_usuario_por_id(session["usuario_id"])
+    # Usuário comum só pode visualizar os próprios chamados
+    if usuario["perfil"] == "Usuário":
+        if chamado["usuario_id"] != usuario["id"]:
+            flash(
+                "Você não tem permissão para visualizar este chamado.",
+                "danger"
+            )
+            return redirect(url_for("chamados.chamados"))
+
+    historico = listar_historico_chamado(chamado_id)
+    comentarios = listar_comentarios(chamado_id)
 
     return render_template(
         "visualizar_chamado.html",
         chamado=chamado,
         historico=historico,
-        usuario=usuario
+        usuario=usuario,
+        comentarios=comentarios
     )
 
+@chamados_bp.route(
+    "/chamados/<int:chamado_id>/comentario",
+    methods=["POST"]
+)
+def adicionar_comentario(chamado_id):
+    if "usuario_id" not in session:
+        return redirect(url_for("auth.login"))
+
+    usuario = buscar_usuario_por_id(session["usuario_id"])
+    chamado = buscar_chamado_por_id(chamado_id)
+
+    if not chamado:
+        flash("Chamado não encontrado.", "danger")
+        return redirect(url_for("chamados.chamados"))
+
+    # Usuário comum só pode comentar nos próprios chamados
+    if usuario["perfil"] == "Usuário":
+        if chamado["usuario_id"] != usuario["id"]:
+            flash(
+                "Você não tem permissão para comentar neste chamado.",
+                "danger"
+            )
+            return redirect(url_for("chamados.chamados"))
+
+    # Chamados fechados não permitem novos comentários
+    if chamado["status"] == "Fechado":
+        flash(
+            "Chamados fechados não permitem novos comentários.",
+            "warning"
+        )
+        return redirect(
+            url_for(
+                "chamados.visualizar_chamado",
+                chamado_id=chamado_id
+            )
+        )
+
+    mensagem = request.form.get("mensagem", "").strip()
+
+    if not mensagem:
+        flash("Digite um comentário.", "warning")
+        return redirect(
+            url_for(
+                "chamados.visualizar_chamado",
+                chamado_id=chamado_id
+            )
+        )
+
+    resultado = criar_comentario(
+        chamado_id,
+        session["usuario_id"],
+        mensagem
+    )
+
+    if not resultado:
+        flash(
+            "Não foi possível adicionar o comentário.",
+            "danger"
+        )
+        return redirect(
+            url_for(
+                "chamados.visualizar_chamado",
+                chamado_id=chamado_id
+            )
+        )
+
+    flash("Comentário adicionado com sucesso!", "success")
+
+    return redirect(
+        url_for(
+            "chamados.visualizar_chamado",
+            chamado_id=chamado_id
+        )
+    )
 
 @chamados_bp.route("/chamados/<int:chamado_id>/assumir", methods=["POST"])
 def assumir(chamado_id):
@@ -431,6 +539,13 @@ def reabrir(chamado_id):
 
     if "usuario_id" not in session:
         return redirect(url_for("auth.login"))
+    
+    
+    usuario = buscar_usuario_por_id(session["usuario_id"])
+
+    if not usuario:
+        flash("Usuário não encontrado.", "danger")
+        return redirect(url_for("chamados.chamados"))
 
     chamado = buscar_chamado_por_id(chamado_id)
 
@@ -622,12 +737,44 @@ def editar_chamado(chamado_id):
         tecnicos=tecnicos
     )
 
-@chamados_bp.route("/chamados/<int:chamado_id>/excluir", methods=["POST"])
+@chamados_bp.route(
+    "/chamados/<int:chamado_id>/excluir",
+    methods=["POST"]
+)
 def excluir_chamado_rota(chamado_id):
-
     if "usuario_id" not in session:
         return redirect(url_for("auth.login"))
 
-    excluir_chamado(chamado_id)
+    usuario = buscar_usuario_por_id(session["usuario_id"])
 
+    if not usuario:
+        flash("Usuário não encontrado.", "danger")
+        return redirect(url_for("chamados.chamados"))
+
+    # Apenas Administradores podem excluir chamados
+    if usuario["perfil"] != "Administrador":
+        flash(
+            "Você não tem permissão para excluir chamados.",
+            "danger"
+        )
+        return redirect(url_for("chamados.chamados"))
+
+    chamado = buscar_chamado_por_id(chamado_id)
+
+    if not chamado:
+        flash("Chamado não encontrado.", "danger")
+        return redirect(url_for("chamados.chamados"))
+
+    resultado = excluir_chamado(chamado_id)
+
+    if not resultado:
+        flash("Não foi possível excluir o chamado.", "danger")
+        return redirect(
+            url_for(
+                "chamados.visualizar_chamado",
+                chamado_id=chamado_id
+            )
+        )
+
+    flash("Chamado excluído com sucesso!", "success")
     return redirect(url_for("chamados.chamados"))

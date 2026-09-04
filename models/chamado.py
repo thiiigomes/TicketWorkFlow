@@ -4,64 +4,57 @@ def listar_chamados(
     pesquisa="",
     status="",
     prioridade="",
-    tecnico=""
+    tecnico="",
+    usuario_id=None,
+    perfil=None
 ):
-
     conexao = get_connection()
     cursor = conexao.cursor(dictionary=True)
 
     sql = """
         SELECT
-
             c.id,
             c.titulo,
             c.status,
-
             u.nome AS solicitante,
             t.nome AS tecnico,
             cat.nome AS categoria,
             p.nome AS prioridade,
             CONCAT(e.fabricante, ' ', e.modelo) AS equipamento
-
         FROM chamado c
-
         JOIN usuario u
             ON c.usuario_id = u.id
-
-        JOIN usuario t
+        LEFT JOIN usuario t
             ON c.tecnico_id = t.id
-
         JOIN categoria cat
             ON c.categoria_id = cat.id
-
         JOIN prioridade p
             ON c.prioridade_id = p.id
-
         JOIN equipamento e
             ON c.equipamento_id = e.id
-
         WHERE 1=1
     """
 
     parametros = []
 
-    if pesquisa:
+    # Usuário comum só pode visualizar seus próprios chamados
+    if perfil == "Usuário":
+        sql += " AND c.usuario_id = %s"
+        parametros.append(usuario_id)
 
+    if pesquisa:
         sql += " AND c.titulo LIKE %s"
         parametros.append(f"%{pesquisa}%")
 
     if status:
-
         sql += " AND c.status = %s"
         parametros.append(status)
 
     if prioridade:
-
         sql += " AND p.nome = %s"
         parametros.append(prioridade)
 
     if tecnico:
-
         sql += " AND t.nome = %s"
         parametros.append(tecnico)
 
@@ -532,6 +525,7 @@ def assumir_chamado(chamado_id, tecnico_id, usuario_id):
         SELECT
             c.status,
             c.tecnico_id,
+            c.usuario_id,
             t.nome AS tecnico
 
         FROM chamado c
@@ -587,7 +581,9 @@ def assumir_chamado(chamado_id, tecnico_id, usuario_id):
     conexao.close()
 
     # Registra no histórico
+
     from models.historico import registrar_historico
+    from models.notificacao import criar_notificacao
 
     descricao = (
         f"Chamado assumido pelo técnico "
@@ -600,6 +596,15 @@ def assumir_chamado(chamado_id, tecnico_id, usuario_id):
         usuario_id,
         "Chamado assumido",
         descricao
+    )
+
+    # Notifica o solicitante
+
+    criar_notificacao(
+        chamado["usuario_id"],
+        chamado_id,
+        f"O chamado #{chamado_id} foi assumido pelo técnico "
+        f'"{tecnico["nome"]}" e está em andamento.'
     )
 
     return True

@@ -50,3 +50,40 @@ def marcar_como_lida(notificacao_id):
     return redirect(
         url_for("notificacoes.notificacoes")
     )
+
+@notificacoes_bp.route(
+    "/notificacoes/<int:notificacao_id>/abrir"
+)
+def abrir_notificacao(notificacao_id):
+
+    if "usuario_id" not in session:
+        return redirect(url_for("auth.login"))
+
+    usuario_id = session["usuario_id"]
+
+    notificacoes = listar_notificacoes(usuario_id)
+
+    notificacao = next(
+        (
+            n for n in notificacoes
+            if n["id"] == notificacao_id
+        ),
+        None
+    )
+
+    if not notificacao:
+        return redirect(
+            url_for("notificacoes.notificacoes")
+        )
+
+    marcar_notificacao_como_lida(
+        notificacao_id,
+        usuario_id
+    )
+
+    return redirect(
+        url_for(
+            "chamados.visualizar_chamado",
+            chamado_id=notificacao["chamado_id"]
+        )
+    )

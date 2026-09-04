@@ -383,4 +383,129 @@ Chamado #{{ chamado.id }}
 
 </div>
 
+<!-- COMENTÁRIOS -->
+
+<div class="card shadow border-0 mt-4">
+
+    <div class="card-header bg-white">
+
+        <h5 class="mb-0 fw-bold">
+
+            <i class="bi bi-chat-left-text"></i>
+
+            Comentários
+
+        </h5>
+
+    </div>
+
+
+    <div class="card-body">
+
+        {% if chamado.status != "Fechado" %}
+
+            <!-- FORMULÁRIO DE COMENTÁRIO -->
+
+                <form
+                    method="POST"
+                    action="{{ url_for(
+                        'chamados.adicionar_comentario',
+                        chamado_id=chamado.id
+                    ) }}"
+                    class="mb-4">
+
+                    <label class="form-label fw-bold">
+                        Adicionar comentário
+                    </label>
+
+                    <textarea
+                        name="mensagem"
+                        class="form-control"
+                        rows="3"
+                        placeholder="Digite seu comentário..."
+                        required></textarea>
+
+                    <div class="text-end mt-2">
+
+                        <button
+                            type="submit"
+                            class="btn btn-primary">
+
+                            <i class="bi bi-send"></i>
+                            Enviar comentário
+
+                        </button>
+
+                    </div>
+
+                </form>
+
+            {% endif %}
+
+        <hr class="mb-4">
+
+        {% if comentarios %}
+
+            {% for comentario in comentarios %}
+
+                <div class="d-flex align-items-start gap-3 mb-4">
+
+                    <div>
+
+                        <i class="bi bi-person-circle fs-2 text-primary"></i>
+
+                    </div>
+
+
+                    <div class="flex-grow-1">
+
+                        <div class="d-flex justify-content-between">
+
+                            <strong>
+                                {{ comentario.usuario }}
+                            </strong>
+
+                            <small class="text-muted">
+
+                                <i class="bi bi-calendar3"></i>
+
+                                {{ comentario.data_hora }}
+
+                            </small>
+
+                        </div>
+
+
+                        <div class="bg-light rounded p-3 mt-2">
+
+                            {{ comentario.mensagem }}
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            {% endfor %}
+
+        {% else %}
+
+            <div class="text-center text-muted py-4">
+
+                <i class="bi bi-chat-left-text fs-1"></i>
+
+                <p class="mt-2 mb-0">
+
+                    Nenhum comentário registrado.
+
+                </p>
+
+            </div>
+
+        {% endif %}
+
+    </div>
+
+</div>
+
 {% endblock %}
