@@ -1,5 +1,11 @@
 # 🎫 Ticket Workflow
 
+![Python](https://img.shields.io/badge/Python-3.x-blue?logo=python&logoColor=white)
+![Flask](https://img.shields.io/badge/Flask-3.1-black?logo=flask&logoColor=white)
+![MySQL](https://img.shields.io/badge/MySQL-Database-4479A1?logo=mysql&logoColor=white)
+![Bootstrap](https://img.shields.io/badge/Bootstrap-5-7952B3?logo=bootstrap&logoColor=white)
+![Status](https://img.shields.io/badge/Status-Funcional-success)
+
 Sistema web para **gerenciamento de chamados e ativos de TI**, desenvolvido com Python, Flask e MySQL.
 
 O Ticket Workflow foi criado para organizar o fluxo de atendimento de suporte técnico, permitindo o acompanhamento completo de um chamado desde sua abertura até o encerramento, com controle de usuários, técnicos responsáveis, prioridades, histórico, comentários e notificações.
@@ -353,22 +359,43 @@ Depois, acesse o endereço exibido pelo Flask no terminal.
 
 ## 📸 Screenshots
 
-### Dashboard
+### 📊 Dashboard
 
-> Adicionar screenshot do Dashboard.
+Visão geral dos chamados, indicadores por status e prioridade e acompanhamento da situação atual dos atendimentos.
 
-### Gerenciamento de chamados
+![Dashboard - Indicadores](docs/images/dashboard-1.png)
 
-> Adicionar screenshot da listagem de chamados.
+![Dashboard - Últimos Chamados](docs/images/dashboard-2.png)
 
-### Detalhes do chamado
+---
 
-> Adicionar screenshot da tela de detalhes, histórico e comentários.
+### 🎫 Gerenciamento de Chamados
 
-### Versão mobile
+Listagem centralizada dos chamados com filtros por status, prioridade e técnico, além das ações disponíveis conforme o perfil do usuário.
 
-> Adicionar screenshot do menu responsivo em dispositivo móvel.
+![Gerenciamento de Chamados](docs/images/chamados.png)
 
+---
+
+### 🔎 Detalhes e Histórico do Chamado
+
+Visualização completa das informações do chamado, técnico responsável, ações disponíveis e histórico das movimentações realizadas.
+
+![Detalhes do Chamado](docs/images/detalhes-chamado-1.png)
+
+O sistema mantém o histórico das ações e também permite a comunicação entre solicitantes e equipe técnica através de comentários.
+
+![Histórico e Comentários](docs/images/detalhes-chamado-2.png)
+
+---
+
+### 📱 Interface Responsiva
+
+A aplicação possui interface adaptada para dispositivos móveis, incluindo navegação específica para telas menores.
+
+![Dashboard Mobile](docs/images/mobile-dashboard.png)
+
+![Menu Mobile](docs/images/mobile-menu.png)
 ---
 
 ## 🚀 Melhorias futuras
