@@ -427,3 +427,47 @@ FodyWeavers.xsd
 *.msix
 *.msm
 *.msp
+
+# =========================================================
+# Ticket Workflow - Python / Flask
+# =========================================================
+
+# Ambientes virtuais
+venv/
+.venv/
+env/
+ENV/
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Flask
+instance/
+.flaskenv
+
+# Variáveis de ambiente e credenciais
+.env
+.env.*
+!.env.example
+
+# Arquivos locais de banco
+*.sqlite
+*.sqlite3
+
+# Cache e testes
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Sistema operacional
+.DS_Store
+Thumbs.db
+
+# VS Code - configurações locais
+.vscode/
+
+# Arquivos temporários
+*.tmp
+*.bak

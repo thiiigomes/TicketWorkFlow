@@ -8,7 +8,11 @@
 
 Sistema web para **gerenciamento de chamados e ativos de TI**, desenvolvido com Python, Flask e MySQL.
 
+<<<<<<< HEAD
 O Ticket Workflow foi criado para organizar o fluxo de atendimento de suporte técnico, permitindo o acompanhamento completo de um chamado desde sua abertura até o encerramento, com controle de usuários, técnicos responsáveis, prioridades, histórico, comentários e notificações.
+=======
+O **Ticket Workflow** foi criado para organizar o fluxo de atendimento de suporte técnico, permitindo o acompanhamento completo de um chamado desde sua abertura até o encerramento, com controle de usuários, técnicos responsáveis, prioridades, histórico, comentários e notificações.
+>>>>>>> c6a8b6b (Finaliza documentacao e configuracao segura do projeto)
 
 ---
 
@@ -113,7 +117,11 @@ Pode:
 
 ### 1. Abertura
 
+<<<<<<< HEAD
 O usuário registra uma solicitação informando dados como:
+=======
+O usuário registra uma solicitação informando:
+>>>>>>> c6a8b6b (Finaliza documentacao e configuracao segura do projeto)
 
 - Título
 - Descrição
@@ -178,7 +186,11 @@ A reabertura também fica registrada no histórico.
 
 ## 🔒 Regras de negócio
 
+<<<<<<< HEAD
 Algumas das regras implementadas no sistema:
+=======
+Algumas das principais regras implementadas no sistema:
+>>>>>>> c6a8b6b (Finaliza documentacao e configuracao segura do projeto)
 
 - Apenas usuários autenticados podem acessar o sistema
 - Usuários comuns visualizam somente seus próprios chamados
@@ -186,10 +198,17 @@ Algumas das regras implementadas no sistema:
 - Apenas Técnicos e Administradores podem assumir chamados
 - Um chamado possui apenas um técnico responsável
 - Um técnico não pode assumir um chamado atribuído a outro técnico
+<<<<<<< HEAD
 - A transferência deve ocorrer através do fluxo apropriado
 - Um chamado fechado não pode ser editado ou transferido
 - Apenas chamados em andamento podem ser encerrados
 - O encerramento exige uma solução
+=======
+- A troca do responsável deve ocorrer através do fluxo de transferência
+- Um chamado fechado não pode ser editado ou transferido
+- Apenas chamados em andamento podem ser encerrados
+- O encerramento exige o registro de uma solução
+>>>>>>> c6a8b6b (Finaliza documentacao e configuracao segura do projeto)
 - A reabertura exige um motivo
 - Comentários não podem ser adicionados após o fechamento
 - Apenas Administradores podem excluir chamados
@@ -254,6 +273,12 @@ Exemplo da organização:
 ```text
 TicketWorkFlow/
 │
+<<<<<<< HEAD
+=======
+├── docs/
+│   └── images/
+│
+>>>>>>> c6a8b6b (Finaliza documentacao e configuracao segura do projeto)
 ├── models/
 │   ├── chamado.py
 │   ├── historico.py
@@ -317,7 +342,11 @@ venv\Scripts\activate
 pip install -r requirements.txt
 ```
 
+<<<<<<< HEAD
 As principais dependências utilizadas são:
+=======
+Principais dependências utilizadas:
+>>>>>>> c6a8b6b (Finaliza documentacao e configuracao segura do projeto)
 
 ```text
 Flask
@@ -339,21 +368,33 @@ Antes de executar a aplicação, é necessário:
 3. Configurar corretamente a conexão com o banco
 4. Criar as tabelas necessárias para o funcionamento do sistema
 
+<<<<<<< HEAD
 > As credenciais do banco de dados não devem ser publicadas no GitHub.
+=======
+> ⚠️ Credenciais e senhas do banco de dados não devem ser publicadas no repositório.
+>>>>>>> c6a8b6b (Finaliza documentacao e configuracao segura do projeto)
 
 ---
 
 ## ▶️ Executando o projeto
 
+<<<<<<< HEAD
 Com o ambiente virtual ativado e as dependências instaladas, execute o arquivo principal da aplicação conforme a configuração do projeto.
 
 Por exemplo:
+=======
+Com o ambiente virtual ativado, as dependências instaladas e o banco de dados configurado, execute o arquivo principal da aplicação:
+>>>>>>> c6a8b6b (Finaliza documentacao e configuracao segura do projeto)
 
 ```bash
 python app.py
 ```
 
+<<<<<<< HEAD
 Depois, acesse o endereço exibido pelo Flask no terminal.
+=======
+Depois, acesse no navegador o endereço informado pelo Flask no terminal.
+>>>>>>> c6a8b6b (Finaliza documentacao e configuracao segura do projeto)
 
 ---
 
@@ -396,6 +437,10 @@ A aplicação possui interface adaptada para dispositivos móveis, incluindo nav
 ![Dashboard Mobile](docs/images/mobile-dashboard.png)
 
 ![Menu Mobile](docs/images/mobile-menu.png)
+<<<<<<< HEAD
+=======
+
+>>>>>>> c6a8b6b (Finaliza documentacao e configuracao segura do projeto)
 ---
 
 ## 🚀 Melhorias futuras
@@ -439,12 +484,22 @@ Além da implementação técnica, o projeto busca representar situações encon
 
 Estudante de Análise e Desenvolvimento de Sistemas, com experiência na área de Tecnologia da Informação e foco em desenvolvimento de software.
 
+<<<<<<< HEAD
 GitHub: `@thiiigomes`
+=======
+GitHub: **@thiiigomes**
+>>>>>>> c6a8b6b (Finaliza documentacao e configuracao segura do projeto)
 
 ---
 
 ## 📄 Status do projeto
 
+<<<<<<< HEAD
 🟢 **Em desenvolvimento — versão funcional disponível**
 
 As principais funcionalidades do fluxo de chamados já estão implementadas e validadas.
+=======
+🟢 **Versão funcional disponível**
+
+As principais funcionalidades do fluxo de chamados estão implementadas e validadas.
+>>>>>>> c6a8b6b (Finaliza documentacao e configuracao segura do projeto)
