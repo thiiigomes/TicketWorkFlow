@@ -73,7 +73,7 @@ def listar_tecnicos():
             id,
             nome
         FROM usuario
-        WHERE perfil = 'Técnico'
+        WHERE perfil IN ('Técnico', 'Administrador')
         ORDER BY nome
     """)
 

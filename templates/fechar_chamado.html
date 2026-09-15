@@ -6,115 +6,211 @@ Fechar Chamado #{{ chamado.id }}
 
 {% block content %}
 
-<div class="d-flex justify-content-between align-items-center mb-4">
+<div class="container-fluid">
 
-    <div>
-        <h2 class="fw-bold mb-1">
-            Fechar Chamado #{{ chamado.id }}
-        </h2>
+    <!-- Cabeçalho -->
+    <div class="d-flex flex-column flex-md-row
+                justify-content-between align-items-md-center
+                gap-3 mb-4">
 
-        <p class="text-muted mb-0">
-            Registre a solução realizada antes de encerrar o chamado.
-        </p>
-    </div>
+        <div>
 
-</div>
+            <div class="text-muted small mb-1">
+                <i class="bi bi-ticket-perforated me-1"></i>
+                Chamado #{{ chamado.id }}
+            </div>
 
-
-<div class="card shadow border-0">
-
-    <div class="card-body">
-
-        <div class="alert alert-warning">
-
-            <i class="bi bi-exclamation-triangle"></i>
-
-            <strong>Atenção:</strong>
-
-            informe detalhadamente a solução aplicada.
-            Essa informação ficará registrada no histórico do chamado.
-
-        </div>
-
-
-        <div class="mb-4">
-
-            <h5 class="fw-bold">
-                {{ chamado.titulo }}
-            </h5>
-
-            <p class="text-muted mb-1">
-
-                <strong>Solicitante:</strong>
-                {{ chamado.solicitante }}
-
-            </p>
+            <h2 class="fw-bold mb-1">
+                <i class="bi bi-check-circle me-2 text-success"></i>
+                Fechar Chamado
+            </h2>
 
             <p class="text-muted mb-0">
-
-                <strong>Técnico responsável:</strong>
-                {{ chamado.tecnico }}
-
+                Registre a solução aplicada antes de encerrar o atendimento.
             </p>
 
         </div>
 
+        <a href="{{ url_for(
+            'chamados.visualizar_chamado',
+            chamado_id=chamado.id
+        ) }}"
+           class="btn btn-outline-secondary">
 
-        <form
-            method="POST"
-            action="{{ url_for(
-                'chamados.fechar',
-                chamado_id=chamado.id
-            ) }}"
-        >
+            <i class="bi bi-arrow-left me-1"></i>
+            Voltar
 
-            <div class="mb-3">
+        </a>
 
-                <label class="form-label fw-semibold">
-                    Solução do Chamado
-                </label>
+    </div>
 
-                <textarea
-                    name="solucao"
-                    class="form-control"
-                    rows="7"
-                    placeholder="Descreva o problema identificado e a solução aplicada..."
-                    required></textarea>
 
-                <div class="form-text">
-                    Descreva de forma clara o que foi realizado para solucionar o chamado.
+    <!-- Card principal -->
+    <div class="card shadow-sm border-0">
+
+        <div class="card-body p-4">
+
+            <!-- Informações -->
+            <div class="bg-light rounded-3 p-4 mb-4">
+
+                <div class="row g-3">
+
+                    <!-- Chamado -->
+                    <div class="col-md-6">
+
+                        <div class="small text-muted mb-1">
+                            <i class="bi bi-card-heading me-1"></i>
+                            Chamado
+                        </div>
+
+                        <div class="fw-semibold">
+                            {{ chamado.titulo }}
+                        </div>
+
+                    </div>
+
+
+                    <!-- Status -->
+                    <div class="col-md-6">
+
+                        <div class="small text-muted mb-1">
+                            <i class="bi bi-activity me-1"></i>
+                            Status atual
+                        </div>
+
+                        <span class="badge rounded-pill
+                                     bg-warning text-dark px-3 py-2">
+
+                            <i class="bi bi-clock me-1"></i>
+                            {{ chamado.status }}
+
+                        </span>
+
+                    </div>
+
+
+                    <!-- Solicitante -->
+                    <div class="col-md-6">
+
+                        <div class="small text-muted mb-1">
+                            <i class="bi bi-person me-1"></i>
+                            Solicitante
+                        </div>
+
+                        <div class="fw-semibold">
+                            {{ chamado.solicitante }}
+                        </div>
+
+                    </div>
+
+
+                    <!-- Técnico -->
+                    <div class="col-md-6">
+
+                        <div class="small text-muted mb-1">
+                            <i class="bi bi-person-gear me-1"></i>
+                            Técnico responsável
+                        </div>
+
+                        {% if chamado.tecnico %}
+
+                            <div class="fw-semibold">
+                                {{ chamado.tecnico }}
+                            </div>
+
+                        {% else %}
+
+                            <div class="text-muted">
+                                Não atribuído
+                            </div>
+
+                        {% endif %}
+
+                    </div>
+
                 </div>
 
             </div>
 
 
-            <div class="d-flex justify-content-end gap-2 mt-4">
+            <!-- Aviso -->
+            <div class="alert alert-warning
+                        d-flex align-items-start gap-2 mb-4">
 
-                <a
-                    href="{{ url_for(
-                        'chamados.visualizar_chamado',
-                        chamado_id=chamado.id
-                    ) }}"
-                    class="btn btn-outline-secondary">
+                <i class="bi bi-exclamation-triangle-fill mt-1"></i>
 
-                    <i class="bi bi-arrow-left"></i>
-                    Cancelar
-
-                </a>
-
-
-                <button
-                    type="submit"
-                    class="btn btn-success">
-
-                    <i class="bi bi-check-circle"></i>
-                    Confirmar Fechamento
-
-                </button>
+                <div>
+                    <strong>Atenção:</strong>
+                    ao confirmar o fechamento, o chamado será encerrado.
+                    A solução informada ficará registrada no histórico.
+                </div>
 
             </div>
 
-        </form>
+
+            <!-- Formulário -->
+            <form method="POST"
+                  action="{{ url_for(
+                      'chamados.fechar',
+                      chamado_id=chamado.id
+                  ) }}">
+
+                <div class="mb-4">
+
+                    <label for="solucao"
+                           class="form-label fw-semibold">
+
+                        <i class="bi bi-tools me-1 text-muted"></i>
+                        Solução do Chamado
+
+                    </label>
+
+                    <textarea
+                        name="solucao"
+                        id="solucao"
+                        class="form-control"
+                        rows="6"
+                        maxlength="2000"
+                        placeholder="Descreva o problema identificado, as ações realizadas e a solução aplicada..."
+                        required></textarea>
+
+                    <div class="form-text">
+                        Informe de forma clara o que foi realizado
+                        para solucionar o problema.
+                    </div>
+
+                </div>
+
+
+                <!-- Ações -->
+                <div class="d-flex flex-column flex-sm-row
+                            justify-content-end gap-2
+                            pt-4 border-top">
+
+                    <a href="{{ url_for(
+                        'chamados.visualizar_chamado',
+                        chamado_id=chamado.id
+                    ) }}"
+                       class="btn btn-outline-secondary">
+
+                        Cancelar
+
+                    </a>
+
+
+                    <button type="submit"
+                            class="btn btn-success">
+
+                        <i class="bi bi-check-circle me-1"></i>
+                        Confirmar Fechamento
+
+                    </button>
+
+                </div>
+
+            </form>
+
+        </div>
 
     </div>
 

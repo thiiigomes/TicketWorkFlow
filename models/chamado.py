@@ -404,7 +404,7 @@ def buscar_chamado_por_id(chamado_id):
         JOIN usuario u
             ON c.usuario_id = u.id
             
-        JOIN usuario t
+        LEFT JOIN usuario t
             ON c.tecnico_id = t.id
             
         JOIN categoria cat
@@ -527,12 +527,9 @@ def assumir_chamado(chamado_id, tecnico_id, usuario_id):
             c.tecnico_id,
             c.usuario_id,
             t.nome AS tecnico
-
         FROM chamado c
-
         LEFT JOIN usuario t
             ON c.tecnico_id = t.id
-
         WHERE c.id = %s
     """, (chamado_id,))
 
@@ -543,8 +540,18 @@ def assumir_chamado(chamado_id, tecnico_id, usuario_id):
         conexao.close()
         return False
 
-    # Só chamados abertos podem ser assumidos
+    # Apenas chamados abertos podem ser assumidos
     if chamado["status"] != "Aberto":
+        cursor.close()
+        conexao.close()
+        return False
+
+    # Se já existe um técnico responsável,
+    # somente esse próprio técnico pode assumir o chamado.
+    if (
+        chamado["tecnico_id"] is not None
+        and chamado["tecnico_id"] != tecnico_id
+    ):
         cursor.close()
         conexao.close()
         return False
@@ -563,7 +570,7 @@ def assumir_chamado(chamado_id, tecnico_id, usuario_id):
         conexao.close()
         return False
 
-    # Atribui o chamado ao técnico e muda o status
+    # Assume o chamado e inicia o atendimento
     cursor.execute("""
         UPDATE chamado
         SET
@@ -581,12 +588,11 @@ def assumir_chamado(chamado_id, tecnico_id, usuario_id):
     conexao.close()
 
     # Registra no histórico
-
     from models.historico import registrar_historico
     from models.notificacao import criar_notificacao
 
     descricao = (
-        f"Chamado assumido pelo técnico "
+        f'Chamado assumido pelo técnico '
         f'"{tecnico["nome"]}". '
         f'Status: "Aberto" → "Em andamento".'
     )
@@ -599,11 +605,10 @@ def assumir_chamado(chamado_id, tecnico_id, usuario_id):
     )
 
     # Notifica o solicitante
-
     criar_notificacao(
         chamado["usuario_id"],
         chamado_id,
-        f"O chamado #{chamado_id} foi assumido pelo técnico "
+        f'O chamado #{chamado_id} foi assumido pelo técnico '
         f'"{tecnico["nome"]}" e está em andamento.'
     )
 
@@ -660,7 +665,7 @@ def transferir_chamado(
             nome
         FROM usuario
         WHERE id = %s
-        AND perfil = 'Técnico'
+        AND perfil IN ('Técnico', 'Administrador')
     """, (novo_tecnico_id,))
 
     novo_tecnico = cursor.fetchone()

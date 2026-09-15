@@ -6,204 +6,323 @@ Editar Chamado
 
 {% block content %}
 
-<div class="d-flex justify-content-between align-items-center mb-4">
+<div class="container-fluid">
 
-    <div>
-        <h2 class="fw-bold mb-1">Editar Chamado</h2>
-        <p class="text-muted mb-0">
-            Atualize as informações do chamado.
-        </p>
+    <!-- Cabeçalho -->
+    <div class="d-flex flex-column flex-md-row
+                justify-content-between align-items-md-center
+                gap-3 mb-4">
+
+        <div>
+
+            <div class="text-muted small mb-1">
+                <i class="bi bi-ticket-perforated me-1"></i>
+                Chamado #{{ chamado.id }}
+            </div>
+
+            <h2 class="fw-bold mb-1">
+                <i class="bi bi-pencil-square me-2 text-primary"></i>
+                Editar Chamado
+            </h2>
+
+            <p class="text-muted mb-0">
+                Atualize as informações do chamado.
+            </p>
+
+        </div>
+
+
+        <a href="{{ url_for(
+            'chamados.visualizar_chamado',
+            chamado_id=chamado.id
+        ) }}"
+           class="btn btn-outline-secondary">
+
+            <i class="bi bi-arrow-left me-1"></i>
+            Voltar
+
+        </a>
+
     </div>
 
-</div>
 
-<div class="card shadow border-0">
+    <!-- Formulário -->
+    <div class="card shadow-sm border-0">
 
-    <div class="card-body">
+        <div class="card-body p-4">
 
-        <form method="POST">
+            <form method="POST">
 
-            <div class="row">
+                <!-- Título -->
+                <div class="mb-4">
 
-                <div class="col-md-6 mb-3">
+                    <label for="titulo"
+                           class="form-label fw-semibold">
 
-                    <label class="form-label">Título</label>
+                        <i class="bi bi-type me-1 text-muted"></i>
+                        Título
+
+                    </label>
 
                     <input
                         type="text"
                         class="form-control"
+                        id="titulo"
                         name="titulo"
                         value="{{ chamado.titulo }}"
+                        maxlength="150"
                         required>
 
                 </div>
 
-                <div class="col-md-6 mb-3">
 
-                    <label class="form-label">Técnico</label>
+                <!-- Descrição -->
+                <div class="mb-4">
 
-                    <select
-                        class="form-select"
-                        name="tecnico_id">
+                    <label for="descricao"
+                           class="form-label fw-semibold">
 
-                        {% for tecnico in tecnicos %}
+                        <i class="bi bi-card-text me-1 text-muted"></i>
+                        Descrição
 
-                        <option
-                            value="{{ tecnico.id }}"
-                            {% if tecnico.id == chamado.tecnico_id %}selected{% endif %}>
+                    </label>
 
-                            {{ tecnico.nome }}
-
-                        </option>
-
-                        {% endfor %}
-
-                    </select>
+                    <textarea
+                        class="form-control"
+                        id="descricao"
+                        name="descricao"
+                        rows="5"
+                        required>{{ chamado.descricao }}</textarea>
 
                 </div>
 
-            </div>
 
-            <div class="mb-3">
+                <!-- Categoria e Prioridade -->
+                <div class="row g-3 mb-4">
 
-                <label class="form-label">Descrição</label>
+                    <div class="col-md-6">
 
-                <textarea
-                    class="form-control"
-                    name="descricao"
-                    rows="5">{{ chamado.descricao }}</textarea>
+                        <label for="categoria_id"
+                               class="form-label fw-semibold">
 
-            </div>
+                            <i class="bi bi-tag me-1 text-muted"></i>
+                            Categoria
 
-            <div class="row">
+                        </label>
 
-                <div class="col-md-4 mb-3">
+                        <select
+                            class="form-select"
+                            id="categoria_id"
+                            name="categoria_id"
+                            required>
 
-                    <label class="form-label">Categoria</label>
+                            {% for categoria in categorias %}
 
-                    <select
-                        class="form-select"
-                        name="categoria_id">
+                                <option
+                                    value="{{ categoria.id }}"
+                                    {% if categoria.id == chamado.categoria_id %}
+                                        selected
+                                    {% endif %}>
 
-                        {% for categoria in categorias %}
+                                    {{ categoria.nome }}
 
-                        <option
-                            value="{{ categoria.id }}"
-                            {% if categoria.id == chamado.categoria_id %}selected{% endif %}>
+                                </option>
 
-                            {{ categoria.nome }}
+                            {% endfor %}
 
-                        </option>
+                        </select>
 
-                        {% endfor %}
+                    </div>
 
-                    </select>
 
-                </div>
+                    <div class="col-md-6">
 
-                <div class="col-md-4 mb-3">
+                        <label for="prioridade_id"
+                               class="form-label fw-semibold">
 
-                    <label class="form-label">Prioridade</label>
+                            <i class="bi bi-exclamation-circle me-1 text-muted"></i>
+                            Prioridade
 
-                    <select
-                        class="form-select"
-                        name="prioridade_id">
+                        </label>
 
-                        {% for prioridade in prioridades %}
+                        <select
+                            class="form-select"
+                            id="prioridade_id"
+                            name="prioridade_id"
+                            required>
 
-                        <option
-                            value="{{ prioridade.id }}"
-                            {% if prioridade.id == chamado.prioridade_id %}selected{% endif %}>
+                            {% for prioridade in prioridades %}
 
-                            {{ prioridade.nome }}
+                                <option
+                                    value="{{ prioridade.id }}"
+                                    {% if prioridade.id == chamado.prioridade_id %}
+                                        selected
+                                    {% endif %}>
 
-                        </option>
+                                    {{ prioridade.nome }}
 
-                        {% endfor %}
+                                </option>
 
-                    </select>
+                            {% endfor %}
 
-                </div>
+                        </select>
 
-                <div class="col-md-4 mb-3">
-
-                    <label class="form-label">Status</label>
-
-                    <select
-                        class="form-select"
-                        name="status">
-
-                        <option value="Aberto"
-                            {% if chamado.status == "Aberto" %}selected{% endif %}>
-                            Aberto
-                        </option>
-
-                        <option value="Em andamento"
-                            {% if chamado.status == "Em andamento" %}selected{% endif %}>
-                            Em andamento
-                        </option>
-
-                        <option value="Fechado"
-                            {% if chamado.status == "Fechado" %}selected{% endif %}>
-                            Fechado
-                        </option>
-
-                    </select>
+                    </div>
 
                 </div>
 
-            </div>
 
-            <div class="row">
+                <!-- Equipamento e Técnico -->
+                <div class="row g-3 mb-4">
 
-                <div class="col-md-12 mb-3">
+                    <div class="col-md-6">
 
-                    <label class="form-label">Equipamento</label>
+                        <label for="equipamento_id"
+                               class="form-label fw-semibold">
 
-                    <select
-                        class="form-select"
-                        name="equipamento_id">
+                            <i class="bi bi-laptop me-1 text-muted"></i>
+                            Equipamento
 
-                        {% for equipamento in equipamentos %}
+                        </label>
 
-                        <option
-                            value="{{ equipamento.id }}"
-                            {% if equipamento.id == chamado.equipamento_id %}selected{% endif %}>
+                        <select
+                            class="form-select"
+                            id="equipamento_id"
+                            name="equipamento_id"
+                            required>
 
-                            {{ equipamento.nome }}
+                            {% for equipamento in equipamentos %}
 
-                        </option>
+                                <option
+                                    value="{{ equipamento.id }}"
+                                    {% if equipamento.id == chamado.equipamento_id %}
+                                        selected
+                                    {% endif %}>
 
-                        {% endfor %}
+                                    {{ equipamento.nome }}
 
-                    </select>
+                                </option>
+
+                            {% endfor %}
+
+                        </select>
+
+                    </div>
+
+
+                    <div class="col-md-6">
+
+                        <label for="tecnico_id"
+                               class="form-label fw-semibold">
+
+                            <i class="bi bi-person-gear me-1 text-muted"></i>
+                            Técnico responsável
+
+                        </label>
+
+                        <select
+                            class="form-select"
+                            id="tecnico_id"
+                            name="tecnico_id"
+                            required>
+
+                            {% for tecnico in tecnicos %}
+
+                                <option
+                                    value="{{ tecnico.id }}"
+                                    {% if tecnico.id == chamado.tecnico_id %}
+                                        selected
+                                    {% endif %}>
+
+                                    {{ tecnico.nome }}
+
+                                </option>
+
+                            {% endfor %}
+
+                        </select>
+
+                    </div>
 
                 </div>
 
-            </div>
 
-            <div class="d-flex justify-content-end gap-2 mt-4">
+                <!-- Status atual -->
+                <div class="mb-4">
 
-                <a href="{{ url_for('chamados.chamados') }}"
-                   class="btn btn-outline-secondary">
+                    <label class="form-label fw-semibold">
+                        <i class="bi bi-activity me-1 text-muted"></i>
+                        Status atual
+                    </label>
 
-                    <i class="bi bi-arrow-left"></i>
-                    Cancelar
+                    <div>
 
-                </a>
+                        {% if chamado.status == "Aberto" %}
 
-                <button
-                    type="submit"
-                    class="btn btn-primary">
+                            <span class="badge rounded-pill bg-success px-3 py-2">
+                                Aberto
+                            </span>
 
-                    <i class="bi bi-check-circle"></i>
-                    Salvar Alterações
+                        {% elif chamado.status == "Em andamento" %}
 
-                </button>
+                            <span class="badge rounded-pill
+                                         bg-warning text-dark px-3 py-2">
 
-            </div>
+                                <i class="bi bi-clock me-1"></i>
+                                Em andamento
 
-        </form>
+                            </span>
+
+                        {% else %}
+
+                            <span class="badge rounded-pill
+                                         bg-secondary px-3 py-2">
+
+                                {{ chamado.status }}
+
+                            </span>
+
+                        {% endif %}
+
+                    </div>
+
+                    <div class="form-text mt-2">
+                        O status é alterado pelas ações do chamado,
+                        como assumir, fechar ou reabrir.
+                    </div>
+
+                </div>
+
+
+                <!-- Ações -->
+                <div class="d-flex flex-column flex-sm-row
+                            justify-content-end gap-2
+                            pt-4 border-top">
+
+                    <a href="{{ url_for(
+                        'chamados.visualizar_chamado',
+                        chamado_id=chamado.id
+                    ) }}"
+                       class="btn btn-outline-secondary">
+
+                        Cancelar
+
+                    </a>
+
+
+                    <button type="submit"
+                            class="btn btn-primary">
+
+                        <i class="bi bi-check-circle me-1"></i>
+                        Salvar Alterações
+
+                    </button>
+
+                </div>
+
+            </form>
+
+        </div>
 
     </div>
 

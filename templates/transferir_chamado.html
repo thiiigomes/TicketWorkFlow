@@ -6,117 +6,215 @@ Transferir Chamado
 
 {% block content %}
 
-<div class="d-flex justify-content-between align-items-center mb-4">
+<div class="container-fluid">
 
-    <div>
-        <h2 class="fw-bold mb-1">
-            Transferir Chamado #{{ chamado.id }}
-        </h2>
+    <!-- Cabeçalho -->
+    <div class="d-flex flex-column flex-md-row
+                justify-content-between align-items-md-center
+                gap-3 mb-4">
 
-        <p class="text-muted mb-0">
-            Transfira o chamado para outro técnico.
-        </p>
-    </div>
+        <div>
 
-</div>
+            <div class="text-muted small mb-1">
+                <i class="bi bi-ticket-perforated me-1"></i>
+                Chamado #{{ chamado.id }}
+            </div>
 
+            <h2 class="fw-bold mb-1">
+                <i class="bi bi-arrow-left-right me-2 text-primary"></i>
+                Transferir Chamado
+            </h2>
 
-<div class="card shadow border-0">
-
-    <div class="card-body">
-
-        <div class="alert alert-info">
-
-            <i class="bi bi-info-circle"></i>
-
-            <strong>Chamado atual:</strong>
-            {{ chamado.titulo }}
-
-            <br>
-
-            <strong>Técnico atual:</strong>
-            {{ chamado.tecnico }}
+            <p class="text-muted mb-0">
+                Transfira a responsabilidade deste chamado para outro técnico.
+            </p>
 
         </div>
 
+        <a href="{{ url_for(
+            'chamados.visualizar_chamado',
+            chamado_id=chamado.id
+        ) }}"
+           class="btn btn-outline-secondary">
 
-        <form method="POST">
+            <i class="bi bi-arrow-left me-1"></i>
+            Voltar
 
-            <div class="mb-3">
+        </a>
 
-                <label class="form-label">
-                    Novo Técnico
-                </label>
+    </div>
 
-                <select
-                    name="tecnico_id"
-                    class="form-select"
-                    required>
 
-                    <option value="">
-                        Selecione um técnico
-                    </option>
+    <!-- Card principal -->
+    <div class="card shadow-sm border-0">
 
-                    {% for tecnico in tecnicos %}
+        <div class="card-body p-4">
 
-                        {% if tecnico.id != chamado.tecnico_id %}
+            <!-- Informações do chamado -->
+            <div class="bg-light rounded-3 p-4 mb-4">
 
-                            <option value="{{ tecnico.id }}">
-                                {{ tecnico.nome }}
-                            </option>
+                <div class="row g-3">
+
+                    <!-- Chamado -->
+                    <div class="col-md-6">
+
+                        <div class="small text-muted mb-1">
+                            <i class="bi bi-card-heading me-1"></i>
+                            Chamado
+                        </div>
+
+                        <div class="fw-semibold">
+                            {{ chamado.titulo }}
+                        </div>
+
+                    </div>
+
+
+                    <!-- Técnico atual -->
+                    <div class="col-md-6">
+
+                        <div class="small text-muted mb-1">
+                            <i class="bi bi-person-gear me-1"></i>
+                            Técnico atual
+                        </div>
+
+                        {% if chamado.tecnico %}
+
+                            <div class="fw-semibold">
+                                {{ chamado.tecnico }}
+                            </div>
+
+                        {% else %}
+
+                            <div class="text-muted">
+                                Não atribuído
+                            </div>
 
                         {% endif %}
 
-                    {% endfor %}
+                    </div>
 
-                </select>
-
-            </div>
-
-
-            <div class="mb-3">
-
-                <label class="form-label">
-                    Motivo da Transferência
-                </label>
-
-                <textarea
-                    name="motivo"
-                    class="form-control"
-                    rows="5"
-                    placeholder="Informe o motivo da transferência..."
-                    required></textarea>
+                </div>
 
             </div>
 
 
-            <div class="d-flex justify-content-end gap-2 mt-4">
+            <!-- Aviso -->
+            <div class="alert alert-info
+                        d-flex align-items-start gap-2 mb-4">
 
-                <a
-                    href="{{ url_for(
+                <i class="bi bi-info-circle-fill mt-1"></i>
+
+                <div>
+                    Selecione o novo técnico responsável e informe
+                    o motivo da transferência. A ação será registrada
+                    no histórico do chamado.
+                </div>
+
+            </div>
+
+
+            <!-- Formulário -->
+            <form method="POST">
+
+                <!-- Novo técnico -->
+                <div class="mb-4">
+
+                    <label for="tecnico_id"
+                           class="form-label fw-semibold">
+
+                        <i class="bi bi-person-check me-1 text-muted"></i>
+                        Novo Técnico
+
+                    </label>
+
+                    <select
+                        name="tecnico_id"
+                        id="tecnico_id"
+                        class="form-select"
+                        required>
+
+                        <option value="" selected disabled>
+                            Selecione um técnico
+                        </option>
+
+                        {% for tecnico in tecnicos %}
+
+                            {% if tecnico.id != chamado.tecnico_id %}
+
+                                <option value="{{ tecnico.id }}">
+                                    {{ tecnico.nome }}
+                                </option>
+
+                            {% endif %}
+
+                        {% endfor %}
+
+                    </select>
+
+                    <div class="form-text">
+                        O técnico atualmente responsável não aparece
+                        como opção de transferência.
+                    </div>
+
+                </div>
+
+
+                <!-- Motivo -->
+                <div class="mb-4">
+
+                    <label for="motivo"
+                           class="form-label fw-semibold">
+
+                        <i class="bi bi-chat-left-text me-1 text-muted"></i>
+                        Motivo da Transferência
+
+                    </label>
+
+                    <textarea
+                        name="motivo"
+                        id="motivo"
+                        class="form-control"
+                        rows="5"
+                        maxlength="1000"
+                        placeholder="Explique por que este chamado está sendo transferido..."
+                        required></textarea>
+
+                    <div class="form-text">
+                        O motivo ficará registrado no histórico do chamado.
+                    </div>
+
+                </div>
+
+
+                <!-- Ações -->
+                <div class="d-flex flex-column flex-sm-row
+                            justify-content-end gap-2
+                            pt-4 border-top">
+
+                    <a href="{{ url_for(
                         'chamados.visualizar_chamado',
                         chamado_id=chamado.id
                     ) }}"
-                    class="btn btn-outline-secondary">
+                       class="btn btn-outline-secondary">
 
-                    <i class="bi bi-arrow-left"></i>
-                    Cancelar
+                        Cancelar
 
-                </a>
+                    </a>
 
+                    <button type="submit"
+                            class="btn btn-primary">
 
-                <button
-                    type="submit"
-                    class="btn btn-primary">
+                        <i class="bi bi-arrow-left-right me-1"></i>
+                        Transferir Chamado
 
-                    <i class="bi bi-arrow-left-right"></i>
-                    Transferir Chamado
+                    </button>
 
-                </button>
+                </div>
 
-            </div>
+            </form>
 
-        </form>
+        </div>
 
     </div>
 

@@ -1,59 +1,164 @@
 {% extends "layouts/app.html" %}
 
 {% block title %}
-Reabrir Chamado
+Reabrir Chamado #{{ chamado.id }}
 {% endblock %}
 
 {% block content %}
 
 <div class="container-fluid">
 
-    <div class="mb-4">
+    <!-- Cabeçalho -->
+    <div class="d-flex flex-column flex-md-row
+                justify-content-between align-items-md-center
+                gap-3 mb-4">
 
-        <h1 class="fw-bold">
-            <i class="bi bi-arrow-counterclockwise text-primary"></i>
-            Reabrir Chamado
-        </h1>
+        <div>
 
-        <p class="text-muted">
-            Informe o motivo pelo qual este chamado precisa ser reaberto.
-        </p>
+            <div class="text-muted small mb-1">
+                <i class="bi bi-ticket-perforated me-1"></i>
+                Chamado #{{ chamado.id }}
+            </div>
+
+            <h2 class="fw-bold mb-1">
+                <i class="bi bi-arrow-counterclockwise me-2 text-primary"></i>
+                Reabrir Chamado
+            </h2>
+
+            <p class="text-muted mb-0">
+                Informe o motivo pelo qual este chamado precisa ser reaberto.
+            </p>
+
+        </div>
+
+        <a href="{{ url_for(
+            'chamados.visualizar_chamado',
+            chamado_id=chamado.id
+        ) }}"
+           class="btn btn-outline-secondary">
+
+            <i class="bi bi-arrow-left me-1"></i>
+            Voltar
+
+        </a>
 
     </div>
 
-    <div class="card shadow border-0">
 
-        <div class="card-body">
+    <!-- Card principal -->
+    <div class="card shadow-sm border-0">
 
-            <div class="mb-4">
+        <div class="card-body p-4">
 
-                <h5 class="fw-bold">
-                    Chamado #{{ chamado.id }}
-                </h5>
+            <!-- Informações do chamado -->
+            <div class="bg-light rounded-3 p-4 mb-4">
 
-                <p class="mb-1">
-                    <strong>Título:</strong>
-                    {{ chamado.titulo }}
-                </p>
+                <div class="row g-3">
 
-                <p class="mb-0">
+                    <!-- Chamado -->
+                    <div class="col-md-6">
 
-                    <strong>Status atual:</strong>
+                        <div class="small text-muted mb-1">
+                            <i class="bi bi-card-heading me-1"></i>
+                            Chamado
+                        </div>
 
-                    <span class="badge bg-secondary">
-                        {{ chamado.status }}
-                    </span>
+                        <div class="fw-semibold">
+                            {{ chamado.titulo }}
+                        </div>
 
-                </p>
+                    </div>
+
+
+                    <!-- Status -->
+                    <div class="col-md-6">
+
+                        <div class="small text-muted mb-1">
+                            <i class="bi bi-activity me-1"></i>
+                            Status atual
+                        </div>
+
+                        <span class="badge rounded-pill
+                                     bg-secondary px-3 py-2">
+
+                            <i class="bi bi-check-circle me-1"></i>
+                            {{ chamado.status }}
+
+                        </span>
+
+                    </div>
+
+
+                    <!-- Solicitante -->
+                    <div class="col-md-6">
+
+                        <div class="small text-muted mb-1">
+                            <i class="bi bi-person me-1"></i>
+                            Solicitante
+                        </div>
+
+                        <div class="fw-semibold">
+                            {{ chamado.solicitante }}
+                        </div>
+
+                    </div>
+
+
+                    <!-- Técnico -->
+                    <div class="col-md-6">
+
+                        <div class="small text-muted mb-1">
+                            <i class="bi bi-person-gear me-1"></i>
+                            Técnico responsável
+                        </div>
+
+                        {% if chamado.tecnico %}
+
+                            <div class="fw-semibold">
+                                {{ chamado.tecnico }}
+                            </div>
+
+                        {% else %}
+
+                            <div class="text-muted">
+                                Não atribuído
+                            </div>
+
+                        {% endif %}
+
+                    </div>
+
+                </div>
 
             </div>
 
+
+            <!-- Aviso -->
+            <div class="alert alert-info
+                        d-flex align-items-start gap-2 mb-4">
+
+                <i class="bi bi-info-circle-fill mt-1"></i>
+
+                <div>
+                    Ao reabrir este chamado, ele voltará para
+                    <strong>Em andamento</strong>.
+                    O motivo informado ficará registrado no histórico.
+                </div>
+
+            </div>
+
+
+            <!-- Formulário -->
             <form method="POST">
 
                 <div class="mb-4">
 
-                    <label for="motivo" class="form-label fw-bold">
-                        Motivo da reabertura
+                    <label for="motivo"
+                           class="form-label fw-semibold">
+
+                        <i class="bi bi-chat-left-text me-1 text-muted"></i>
+                        Motivo da Reabertura
+
                     </label>
 
                     <textarea
@@ -61,33 +166,41 @@ Reabrir Chamado
                         id="motivo"
                         class="form-control"
                         rows="5"
-                        placeholder="Informe o motivo da reabertura..."
+                        maxlength="1000"
+                        placeholder="Explique por que este chamado precisa ser reaberto..."
                         required></textarea>
+
+                    <div class="form-text">
+                        Descreva de forma clara o motivo pelo qual
+                        o atendimento precisa continuar.
+                    </div>
 
                 </div>
 
-                <div class="d-flex gap-2">
 
-                    <button
-                        type="submit"
-                        class="btn btn-primary">
+                <!-- Ações -->
+                <div class="d-flex flex-column flex-sm-row
+                            justify-content-end gap-2
+                            pt-4 border-top">
 
-                        <i class="bi bi-arrow-counterclockwise"></i>
-                        Reabrir Chamado
+                    <a href="{{ url_for(
+                        'chamados.visualizar_chamado',
+                        chamado_id=chamado.id
+                    ) }}"
+                       class="btn btn-outline-secondary">
 
-                    </button>
-
-                    <a
-                        href="{{ url_for(
-                            'chamados.visualizar_chamado',
-                            chamado_id=chamado.id
-                        ) }}"
-                        class="btn btn-secondary">
-
-                        <i class="bi bi-x-circle"></i>
                         Cancelar
 
                     </a>
+
+
+                    <button type="submit"
+                            class="btn btn-primary">
+
+                        <i class="bi bi-arrow-counterclockwise me-1"></i>
+                        Reabrir Chamado
+
+                    </button>
 
                 </div>
 

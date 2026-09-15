@@ -1,92 +1,212 @@
-<div class="col-md-3 col-lg-2 bg-dark text-white min-vh-100 d-flex flex-column p-3">
+<div class="bg-dark text-white min-vh-100
+            d-flex flex-column p-3
+            sticky-top overflow-auto"
+     style="height: 100vh;">
+    <!-- Logo -->
+    <div class="text-center mb-4 pt-2">
 
-    <h4 class="mb-4 text-center">
-        <i class="bi bi-ticket-detailed-fill"></i>
-        Ticket Workflow
-    </h4>
+        <div class="d-flex align-items-center
+                    justify-content-center gap-2">
 
-    <ul class="nav flex-column flex-grow-1">
+            <div class="rounded-3 bg-primary
+                        d-flex align-items-center justify-content-center"
+                 style="width: 40px; height: 40px;">
 
-        <li class="nav-item mb-2">
+                <i class="bi bi-ticket-detailed-fill fs-5"></i>
+
+            </div>
+
+            <div class="text-start">
+
+                <div class="fw-bold">
+                    Ticket Workflow
+                </div>
+
+                <small class="text-white-50">
+                    Help Desk
+                </small>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- Navegação -->
+    <div class="text-uppercase text-white-50 small fw-semibold
+                px-2 mb-2"
+         style="font-size: 0.72rem; letter-spacing: 0.05rem;">
+
+        Menu
+
+    </div>
+
+
+    <ul class="nav nav-pills flex-column gap-1 flex-grow-1">
+
+        <!-- Dashboard -->
+        <li class="nav-item">
 
             <a href="{{ url_for('home.home') }}"
-               class="nav-link text-white">
+               class="nav-link d-flex align-items-center gap-2
+                      {% if request.endpoint == 'home.home' %}
+                          active
+                      {% else %}
+                          text-white
+                      {% endif %}">
 
-                <i class="bi bi-house-door-fill"></i>
-
-                Dashboard
-
-            </a>
-
-        </li>
-
-        <li class="nav-item mb-2">
-
-            <a href="{{ url_for('chamados.chamados') }}"
-               class="nav-link text-white">
-
-                <i class="bi bi-ticket-fill"></i>
-
-                Chamados
-
-            </a>
-
-        </li>
-
-        <li class="nav-item mb-2">
-            <a href="{{ url_for('notificacoes.notificacoes') }}"
-                class="nav-link text-white d-flex justify-content-between align-items-center">
+                <i class="bi bi-grid-fill"></i>
 
                 <span>
-                    <i class="bi bi-bell-fill"></i>
-                     Notificações
+                    Dashboard
                 </span>
+
+            </a>
+
+        </li>
+
+
+        <!-- Chamados -->
+        <li class="nav-item">
+
+            <a href="{{ url_for('chamados.chamados') }}"
+               class="nav-link d-flex align-items-center gap-2
+                      {% if request.blueprint == 'chamados' %}
+                          active
+                      {% else %}
+                          text-white
+                      {% endif %}">
+
+                <i class="bi bi-ticket-perforated-fill"></i>
+
+                <span>
+                    Chamados
+                </span>
+
+            </a>
+
+        </li>
+
+
+        <!-- Notificações -->
+        <li class="nav-item">
+
+            <a href="{{ url_for('notificacoes.notificacoes') }}"
+               class="nav-link d-flex
+                      justify-content-between align-items-center
+                      {% if request.blueprint == 'notificacoes' %}
+                          active
+                      {% else %}
+                          text-white
+                      {% endif %}">
+
+                <span class="d-flex align-items-center gap-2">
+
+                    <i class="bi bi-bell-fill"></i>
+
+                    <span>
+                        Notificações
+                    </span>
+
+                </span>
+
 
                 {% if total_notificacoes_nao_lidas > 0 %}
 
-                     <span class="badge bg-danger rounded-pill">
+                    <span class="badge bg-danger rounded-pill">
+
                         {{ total_notificacoes_nao_lidas }}
+
                     </span>
 
                 {% endif %}
 
             </a>
-        </li>
-
-        {% if session["perfil"] == "Administrador" %}
-
-        <li class="nav-item mb-2">
-
-            <a href="{{ url_for('home.usuarios') }}"
-               class="nav-link text-white">
-
-                <i class="bi bi-people-fill"></i>
-
-                Usuários
-
-            </a>
 
         </li>
+
+
+        <!-- Administração -->
+        {% if session.get("perfil") == "Administrador" %}
+
+            <li class="mt-4 mb-2">
+
+                <div class="text-uppercase text-white-50
+                            small fw-semibold px-2"
+                     style="
+                        font-size: 0.72rem;
+                        letter-spacing: 0.05rem;
+                     ">
+
+                    Administração
+
+                </div>
+
+            </li>
+
+
+            <li class="nav-item">
+
+                <a href="{{ url_for('home.usuarios') }}"
+                   class="nav-link d-flex align-items-center gap-2
+                          {% if request.endpoint == 'home.usuarios' %}
+                              active
+                          {% else %}
+                              text-white
+                          {% endif %}">
+
+                    <i class="bi bi-people-fill"></i>
+
+                    <span>
+                        Usuários
+                    </span>
+
+                </a>
+
+            </li>
 
         {% endif %}
 
     </ul>
 
-    <hr class="text-secondary">
 
-    <div class="text-center">
+    <!-- Usuário logado -->
+    <div class="mt-auto">
 
-        <i class="bi bi-person-circle fs-2"></i>
+        <hr class="border-secondary">
 
-        <p class="mt-2 mb-2 fw-bold">
-            {{ session["nome"] }}
-        </p>
+        <div class="d-flex align-items-center gap-2 mb-3 px-1">
+
+            <div class="rounded-circle bg-secondary
+                        d-flex align-items-center justify-content-center
+                        flex-shrink-0"
+                 style="width: 40px; height: 40px;">
+
+                <i class="bi bi-person-fill fs-5"></i>
+
+            </div>
+
+
+            <div class="overflow-hidden">
+
+                <div class="fw-semibold text-truncate">
+                    {{ session.get("nome") }}
+                </div>
+
+                <small class="text-white-50">
+                    {{ session.get("perfil") }}
+                </small>
+
+            </div>
+
+        </div>
+
 
         <a href="{{ url_for('auth.logout') }}"
            class="btn btn-outline-light w-100">
 
-            <i class="bi bi-box-arrow-right"></i>
-
+            <i class="bi bi-box-arrow-right me-1"></i>
             Sair
 
         </a>

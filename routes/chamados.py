@@ -230,7 +230,10 @@ def adicionar_comentario(chamado_id):
         )
     )
 
-@chamados_bp.route("/chamados/<int:chamado_id>/assumir", methods=["POST"])
+@chamados_bp.route(
+    "/chamados/<int:chamado_id>/assumir",
+    methods=["POST"]
+)
 def assumir(chamado_id):
 
     if "usuario_id" not in session:
@@ -241,9 +244,7 @@ def assumir(chamado_id):
     # Busca o usuário logado
     usuario = buscar_usuario_por_id(usuario_id)
 
-    # Verifica se o usuário existe
     if not usuario:
-
         flash(
             "Usuário não encontrado.",
             "danger"
@@ -256,7 +257,7 @@ def assumir(chamado_id):
             )
         )
 
-    # Apenas técnicos podem assumir chamados
+    # Apenas Técnico ou Administrador podem assumir
     if usuario["perfil"] not in ["Técnico", "Administrador"]:
 
         flash(
@@ -271,6 +272,58 @@ def assumir(chamado_id):
             )
         )
 
+    # Busca o chamado antes de tentar assumir
+    chamado = buscar_chamado_por_id(chamado_id)
+
+    if not chamado:
+
+        flash(
+            "Chamado não encontrado.",
+            "danger"
+        )
+
+        return redirect(
+            url_for("chamados.chamados")
+        )
+
+    # O chamado precisa estar Aberto
+    if chamado["status"] != "Aberto":
+
+        flash(
+            "Este chamado não pode ser assumido porque "
+            "não está mais Aberto.",
+            "warning"
+        )
+
+        return redirect(
+            url_for(
+                "chamados.visualizar_chamado",
+                chamado_id=chamado_id
+            )
+        )
+
+    # Se já existe técnico responsável,
+    # somente ele pode assumir o chamado
+    if (
+        chamado["tecnico_id"] is not None
+        and chamado["tecnico_id"] != usuario_id
+    ):
+
+        flash(
+            "Este chamado já está atribuído a outro técnico. "
+            "É necessário realizar uma transferência para "
+            "alterar o responsável.",
+            "warning"
+        )
+
+        return redirect(
+            url_for(
+                "chamados.visualizar_chamado",
+                chamado_id=chamado_id
+            )
+        )
+
+    # Tenta assumir
     resultado = assumir_chamado(
         chamado_id,
         usuario_id,
@@ -280,8 +333,7 @@ def assumir(chamado_id):
     if resultado is False:
 
         flash(
-            "Este chamado não pode ser assumido. "
-            "Verifique se ele ainda está Aberto.",
+            "Não foi possível assumir este chamado.",
             "warning"
         )
 
@@ -557,6 +609,15 @@ def reabrir(chamado_id):
         )
 
         return redirect(url_for("chamados.chamados"))
+    
+    # Usuário comum só pode reabrir os próprios chamados
+    if usuario["perfil"] == "Usuário" and chamado["usuario_id"] != usuario["id"]:
+        flash(
+            "Você não tem permissão para reabrir este chamado.",
+            "danger"
+        )
+        
+        return redirect(url_for("chamados.chamados"))
 
     # Só permite reabrir chamados fechados
     if chamado["status"] != "Fechado":
@@ -683,8 +744,11 @@ def editar_chamado(chamado_id):
         categoria_id = request.form["categoria_id"]
         prioridade_id = request.form["prioridade_id"]
         equipamento_id = request.form["equipamento_id"]
-        status = request.form["status"]
 
+        # O status não pode ser alterado pela edição.
+        # Mantém o status atual do chamado.
+        status = chamado["status"]
+        
         resultado = atualizar_chamado(
             chamado_id,
             titulo,

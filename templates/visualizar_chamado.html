@@ -8,52 +8,67 @@ Chamado #{{ chamado.id }}
 
 <div class="card shadow border-0">
 
-    <div class="card-header bg-primary text-white">
+    <div class="card-header bg-white border-0 pt-4 px-4">
 
-        <h3 class="mb-0">
-            <i class="bi bi-ticket-detailed"></i>
-            Chamado #{{ chamado.id }}
-        </h3>
+        <div class="d-flex flex-column flex-md-row
+                    justify-content-between align-items-md-center gap-3">
+
+            <div>
+                <div class="text-muted small mb-1">
+                    <i class="bi bi-ticket-perforated me-1"></i>
+                    Chamado #{{ chamado.id }}
+                </div>
+
+                <h3 class="fw-bold mb-0">
+                    {{ chamado.titulo }}
+                </h3>
+            </div>
+
+            <div class="d-flex gap-2">
+
+                {% if chamado.prioridade == "Alta" %}
+                    <span class="badge rounded-pill bg-danger px-3 py-2">
+                        <i class="bi bi-exclamation-circle me-1"></i>
+                        Alta
+                    </span>
+
+                {% elif chamado.prioridade == "Média" %}
+                    <span class="badge rounded-pill bg-warning text-dark px-3 py-2">
+                        Média
+                    </span>
+
+                {% else %}
+                    <span class="badge rounded-pill bg-info text-dark px-3 py-2">
+                        Baixa
+                    </span>
+                {% endif %}
+
+
+                {% if chamado.status == "Aberto" %}
+                    <span class="badge rounded-pill bg-success px-3 py-2">
+                        Aberto
+                    </span>
+
+                {% elif chamado.status == "Em andamento" %}
+                    <span class="badge rounded-pill bg-warning text-dark px-3 py-2">
+                        <i class="bi bi-clock me-1"></i>
+                        Em andamento
+                    </span>
+
+                {% elif chamado.status == "Fechado" %}
+                    <span class="badge rounded-pill bg-secondary px-3 py-2">
+                        <i class="bi bi-check-circle me-1"></i>
+                        Fechado
+                    </span>
+                {% endif %}
+
+            </div>
+
+        </div>
 
     </div>
 
     <div class="card-body">
-
-        <div class="d-flex justify-content-between align-items-center">
-
-            <h4 class="fw-bold mb-0">
-                {{ chamado.titulo }}
-            </h4>
-
-            {% if chamado.status == "Aberto" %}
-
-                <span class="badge bg-success">
-                    {{ chamado.status }}
-                </span>
-
-            {% elif chamado.status == "Em andamento" %}
-
-                <span class="badge bg-warning text-dark">
-                    {{ chamado.status }}
-                </span>
-
-            {% elif chamado.status == "Fechado" %}
-
-                <span class="badge bg-secondary">
-                    {{ chamado.status }}
-                </span>
-
-            {% else %}
-
-                <span class="badge bg-primary">
-                    {{ chamado.status }}
-                </span>
-
-            {% endif %}
-
-        </div>
-
-        <hr>
 
         <h5 class="fw-bold">
             Descrição
@@ -65,187 +80,215 @@ Chamado #{{ chamado.id }}
 
         <hr>
 
-        <div class="row">
+        <!-- Informações do chamado -->
+        <div class="row g-3 mt-1">
 
-            <div class="col-md-6">
+            <!-- Solicitante -->
+            <div class="col-md-6 col-lg-3">
+                <div class="bg-light rounded-3 p-3 h-100">
 
-                <strong>Solicitante:</strong><br>
+                    <div class="small text-muted mb-2">
+                        <i class="bi bi-person me-1"></i>
+                        Solicitante
+                    </div>
 
-                <span class="text-muted">
-                    {{ chamado.solicitante }}
-                </span>
+                    <div class="fw-semibold">
+                        {{ chamado.solicitante }}
+                    </div>
 
+                </div>
             </div>
 
-            <div class="col-md-6">
 
-                <strong>Técnico:</strong><br>
+            <!-- Técnico -->
+            <div class="col-md-6 col-lg-3">
+                <div class="bg-light rounded-3 p-3 h-100">
 
-                <span class="text-muted">
-                    {{ chamado.tecnico }}
-                </span>
+                    <div class="small text-muted mb-2">
+                        <i class="bi bi-person-gear me-1"></i>
+                        Técnico responsável
+                    </div>
 
+                    {% if chamado.tecnico %}
+
+                        <div class="fw-semibold">
+                            {{ chamado.tecnico }}
+                        </div>
+
+                    {% else %}
+
+                        <div class="text-muted">
+                            <i class="bi bi-person-dash me-1"></i>
+                            Não atribuído
+                        </div>
+
+                    {% endif %}
+
+                </div>
+            </div>
+
+
+            <!-- Categoria -->
+            <div class="col-md-6 col-lg-3">
+                <div class="bg-light rounded-3 p-3 h-100">
+
+                    <div class="small text-muted mb-2">
+                        <i class="bi bi-tag me-1"></i>
+                        Categoria
+                    </div>
+
+                    <div class="fw-semibold">
+                        {{ chamado.categoria }}
+                    </div>
+
+                </div>
+            </div>
+
+
+            <!-- Equipamento -->
+            <div class="col-md-6 col-lg-3">
+                <div class="bg-light rounded-3 p-3 h-100">
+
+                    <div class="small text-muted mb-2">
+                        <i class="bi bi-laptop me-1"></i>
+                        Equipamento
+                    </div>
+
+                    <div class="fw-semibold">
+                        {{ chamado.equipamento }}
+                    </div>
+
+                </div>
             </div>
 
         </div>
 
-        <br>
+        <!-- Ações do chamado -->
+        <div class="d-flex flex-column flex-md-row
+                    justify-content-between align-items-md-center
+                    gap-3 mt-4 pt-4 border-top">
 
-        <div class="row">
+            <!-- Voltar -->
+            <a href="{{ url_for('chamados.chamados') }}"
+            class="btn btn-outline-secondary">
 
-            <div class="col-md-4">
+                <i class="bi bi-arrow-left me-1"></i>
+                Voltar
 
-                <strong>Categoria</strong><br>
+            </a>
 
-                <span class="text-muted">
-                    {{ chamado.categoria }}
-                </span>
 
-            </div>
+            <!-- Ações -->
+            <div class="d-flex flex-wrap gap-2">
 
-            <div class="col-md-4">
+                <!-- Editar -->
+                {% if usuario.perfil in ["Técnico", "Administrador"]
+                    and chamado.status != "Fechado" %}
 
-                <strong>Equipamento</strong><br>
+                    <a href="{{ url_for(
+                        'chamados.editar_chamado',
+                        chamado_id=chamado.id
+                    ) }}"
+                    class="btn btn-outline-warning">
 
-                <span class="text-muted">
-                    {{ chamado.equipamento }}
-                </span>
+                        <i class="bi bi-pencil me-1"></i>
+                        Editar
 
-            </div>
-
-            <div class="col-md-4">
-
-                <strong>Prioridade</strong><br>
-
-                {% if chamado.prioridade == "Alta" %}
-
-                    <span class="badge bg-danger">
-                        Alta
-                    </span>
-
-                {% elif chamado.prioridade == "Média" %}
-
-                    <span class="badge bg-warning text-dark">
-                        Média
-                    </span>
-
-                {% else %}
-
-                    <span class="badge bg-info text-dark">
-                        Baixa
-                    </span>
+                    </a>
 
                 {% endif %}
-
-            </div>
-
-        </div>
-
-        <div class="mt-4">
-
-            <div class="d-flex justify-content-between align-items-center mt-4">
-
-                <a href="{{ url_for('chamados.chamados') }}"
-                    class="btn btn-secondary">
-
-                    <i class="bi bi-arrow-left"></i>
-                     Voltar
-
-                </a>
 
 
                 {% if usuario.perfil in ["Técnico", "Administrador"] %}
 
-                    {% if chamado.status == "Aberto" %}
+                    <!-- Assumir -->
+                    {% if chamado.status == "Aberto" 
+                            and (
+                                not chamado.tecnico_id
+                                or chamado.tecnico_id == usuario.id
+                            ) %}
 
                         <form method="POST"
-                            action="{{ url_for('chamados.assumir', chamado_id=chamado.id) }}"
+                            action="{{ url_for(
+                                'chamados.assumir',
+                                chamado_id=chamado.id
+                            ) }}"
                             class="m-0">
 
-                            {% if chamado.status == "Aberto" %}
-
-                                <button
-                                    type="submit"
+                            <button type="submit"
                                     class="btn btn-primary">
 
-                                    <i class="bi bi-person-check"></i>
-                                    Assumir Chamado
+                                <i class="bi bi-person-check me-1"></i>
+                                Assumir Chamado
 
-                                </button>
-
-                            {% endif %}
+                            </button>
 
                         </form>
 
+
+                    <!-- Em andamento -->
                     {% elif chamado.status == "Em andamento" %}
 
-                        <div class="d-flex gap-2">
+                        <a href="{{ url_for(
+                            'chamados.transferir',
+                            chamado_id=chamado.id
+                        ) }}"
+                        class="btn btn-outline-warning">
 
-                            {% if chamado.status != "Fechado" %}
+                            <i class="bi bi-arrow-left-right me-1"></i>
+                            Transferir
 
-                                <a
-                                    href="{{ url_for(
-                                        'chamados.transferir',
-                                        chamado_id=chamado.id
-                                    ) }}"
-                                    class="btn btn-warning">
+                        </a>
 
-                                    <i class="bi bi-arrow-left-right"></i>
-                                    Transferir Chamado
+                        <a href="{{ url_for(
+                            'chamados.fechar',
+                            chamado_id=chamado.id
+                        ) }}"
+                        class="btn btn-success">
 
-                                 </a>
+                            <i class="bi bi-check-circle me-1"></i>
+                            Fechar Chamado
 
-                            {% endif %}
+                        </a>
 
-                            {% if chamado.status == "Em andamento" %}
 
-                                <a
-                                    href="{{ url_for(
-                                        'chamados.fechar',
-                                        chamado_id=chamado.id
-                                    ) }}"
-                                    class="btn btn-success">
-
-                                    <i class="bi bi-check-circle"></i>
-                                    Fechar Chamado
-
-                                </a>
-
-                            {% endif %}
-
-                        </div>
-                        
+                    <!-- Fechado -->
                     {% elif chamado.status == "Fechado" %}
 
-                        <a
-                             href="{{ url_for(
-                                'chamados.reabrir',
-                                chamado_id=chamado.id
-                            ) }}"
-                            class="btn btn-primary">
+                        <a href="{{ url_for(
+                            'chamados.reabrir',
+                            chamado_id=chamado.id
+                        ) }}"
+                        class="btn btn-primary">
 
-                            <i class="bi bi-arrow-counterclockwise"></i>
+                            <i class="bi bi-arrow-counterclockwise me-1"></i>
                             Reabrir Chamado
 
                         </a>
 
-                    {% endif %} 
+                    {% endif %}
+
+                {% endif %}
+
+                <!-- Usuário pode reabrir somente o próprio chamado fechado -->
+                {% if usuario.perfil == "Usuário"
+                    and chamado.status == "Fechado"
+                    and chamado.usuario_id == usuario.id %}
+
+                    <a href="{{ url_for(
+                        'chamados.reabrir',
+                        chamado_id=chamado.id
+                    ) }}"
+                    class="btn btn-primary">
+
+                        <i class="bi bi-arrow-counterclockwise me-1"></i>
+                        Reabrir Chamado
+
+                    </a>
 
                 {% endif %}
 
             </div>
-
-           {% if chamado.status != "Fechado" %}
-
-                <a href="{{ url_for('chamados.editar_chamado', chamado_id=chamado.id) }}"
-                     class="btn btn-warning">
-
-                    <i class="bi bi-pencil"></i>
-                     Editar
-
-                 </a>
-
-            {% endif %}
 
         </div>
 
@@ -255,105 +298,157 @@ Chamado #{{ chamado.id }}
 
 
 <!-- HISTÓRICO -->
+<div class="card shadow-sm border-0 mt-4">
 
-<div class="card shadow border-0 mt-4">
+    <div class="card-header bg-white border-0 pt-4 px-4">
+        <div class="d-flex align-items-center justify-content-between">
 
-    <div class="card-header bg-white">
+            <h5 class="mb-0 fw-bold">
+                <i class="bi bi-clock-history me-2 text-primary"></i>
+                Histórico do Chamado
+            </h5>
 
-        <h5 class="mb-0 fw-bold">
+            {% if historico %}
+                <span class="badge rounded-pill bg-light text-dark border">
+                    {{ historico|length }}
+                    registro(s)
+                </span>
+            {% endif %}
 
-            <i class="bi bi-clock-history"></i>
-
-            Histórico do Chamado
-
-        </h5>
-
+        </div>
     </div>
 
-    <div class="card-body">
+
+    <div class="card-body px-4">
 
         {% if historico %}
 
-            <div class="list-group list-group-flush">
+            <div class="mt-2">
 
-               {% for item in historico %}
+                {% for item in historico %}
 
-                    <div class="position-relative ps-4 pb-4">
+                    <div class="position-relative ps-5
+                                {% if not loop.last %}pb-4{% endif %}">
 
-                         <!-- Linha da timeline -->
-                         {% if not loop.last %}
-                            <div
-                                class="position-absolute"
-                                style="
-                                    left: 7px;
-                                    top: 12px;
+                        <!-- Linha vertical -->
+                        {% if not loop.last %}
+                            <div class="position-absolute bg-light border-start"
+                                 style="
+                                    left: 17px;
+                                    top: 34px;
                                     bottom: 0;
-                                    width: 2px;
-                                    background-color: #dee2e6;
-                                ">
+                                    width: 1px;
+                                 ">
                             </div>
                         {% endif %}
 
 
-                        <!-- Marcador -->
-                        <div
-                            class="position-absolute rounded-circle bg-primary"
-                            style="
-                                width: 15px;
-                                height: 15px;
-                                left: 0;
-                                top: 5px;
-                                border: 3px solid #fff;
-                                box-shadow: 0 0 0 1px #0d6efd;
-                            ">
+                        <!-- Ícone da ação -->
+                        <div class="position-absolute start-0 top-0">
+
+                            {% if "criado" in item.acao|lower %}
+
+                                <div class="rounded-circle bg-primary text-white
+                                            d-flex align-items-center justify-content-center"
+                                     style="width: 36px; height: 36px;">
+
+                                    <i class="bi bi-plus-lg"></i>
+
+                                </div>
+
+
+                            {% elif "assum" in item.acao|lower %}
+
+                                <div class="rounded-circle bg-info text-dark
+                                            d-flex align-items-center justify-content-center"
+                                     style="width: 36px; height: 36px;">
+
+                                    <i class="bi bi-person-check"></i>
+
+                                </div>
+
+
+                            {% elif "transfer" in item.acao|lower %}
+
+                                <div class="rounded-circle bg-warning text-dark
+                                            d-flex align-items-center justify-content-center"
+                                     style="width: 36px; height: 36px;">
+
+                                    <i class="bi bi-arrow-left-right"></i>
+
+                                </div>
+
+
+                            {% elif "fechado" in item.acao|lower %}
+
+                                <div class="rounded-circle bg-success text-white
+                                            d-flex align-items-center justify-content-center"
+                                     style="width: 36px; height: 36px;">
+
+                                    <i class="bi bi-check-lg"></i>
+
+                                </div>
+
+
+                            {% elif "reaberto" in item.acao|lower %}
+
+                                <div class="rounded-circle bg-primary text-white
+                                            d-flex align-items-center justify-content-center"
+                                     style="width: 36px; height: 36px;">
+
+                                    <i class="bi bi-arrow-counterclockwise"></i>
+
+                                </div>
+
+
+                            {% else %}
+
+                                <div class="rounded-circle bg-secondary text-white
+                                            d-flex align-items-center justify-content-center"
+                                     style="width: 36px; height: 36px;">
+
+                                    <i class="bi bi-clock-history"></i>
+
+                                </div>
+
+                            {% endif %}
+
                         </div>
 
 
                         <!-- Conteúdo -->
-                        <div class="card border-0 shadow-sm">
+                        <div class="border rounded-3 p-3 bg-white">
 
-                            <div class="card-body py-3">
+                            <div class="d-flex flex-column flex-md-row
+                                        justify-content-between gap-2">
 
-                                <div class="d-flex justify-content-between align-items-start">
+                                <div>
 
-                                    <div>
+                                    <h6 class="fw-bold mb-1">
+                                        {{ item.acao }}
+                                    </h6>
 
-                                         <h6 class="fw-bold mb-1">
+                                    {% if item.descricao %}
+                                        <p class="text-muted mb-2">
+                                            {{ item.descricao }}
+                                        </p>
+                                    {% endif %}
 
-                                            {{ item.acao }}
-
-                                         </h6>
-
-                                         {% if item.descricao %}
-
-                                            <p class="text-muted mb-2">
-
-                                                 {{ item.descricao }}
-
-                                            </p>
-
-                                        {% endif %}
-
-                                        <small class="text-muted">
-
-                                            <i class="bi bi-person"></i>
-
-                                            {{ item.usuario }}
-
-                                        </small>
-
-                                    </div>
-
-
-                                    <small class="text-muted text-nowrap ms-3">
-
-                                        <i class="bi bi-calendar3"></i>
-
-                                        {{ item.data_registro }}
-
+                                    <small class="text-muted">
+                                        <i class="bi bi-person me-1"></i>
+                                        {{ item.usuario }}
                                     </small>
 
                                 </div>
+
+
+                                <small class="text-muted text-md-end text-nowrap">
+
+                                    <i class="bi bi-calendar3 me-1"></i>
+
+                                    {{ item.data_registro }}
+
+                                </small>
 
                             </div>
 
@@ -365,9 +460,10 @@ Chamado #{{ chamado.id }}
 
             </div>
 
+
         {% else %}
 
-            <div class="text-center text-muted py-4">
+            <div class="text-center py-5 text-muted">
 
                 <i class="bi bi-clock-history fs-1"></i>
 
@@ -384,90 +480,56 @@ Chamado #{{ chamado.id }}
 </div>
 
 <!-- COMENTÁRIOS -->
+<div class="card shadow-sm border-0 mt-4 mb-4">
 
-<div class="card shadow border-0 mt-4">
+    <!-- Cabeçalho -->
+    <div class="card-header bg-white border-0 pt-4 px-4">
 
-    <div class="card-header bg-white">
+        <div class="d-flex justify-content-between align-items-center">
 
-        <h5 class="mb-0 fw-bold">
+            <h5 class="mb-0 fw-bold">
+                <i class="bi bi-chat-left-text me-2 text-primary"></i>
+                Comentários
+            </h5>
 
-            <i class="bi bi-chat-left-text"></i>
+            {% if comentarios %}
+                <span class="badge rounded-pill bg-light text-dark border">
+                    {{ comentarios|length }}
+                    comentário(s)
+                </span>
+            {% endif %}
 
-            Comentários
-
-        </h5>
+        </div>
 
     </div>
 
 
-    <div class="card-body">
+    <div class="card-body px-4">
 
-        {% if chamado.status != "Fechado" %}
-
-            <!-- FORMULÁRIO DE COMENTÁRIO -->
-
-                <form
-                    method="POST"
-                    action="{{ url_for(
-                        'chamados.adicionar_comentario',
-                        chamado_id=chamado.id
-                    ) }}"
-                    class="mb-4">
-
-                    <label class="form-label fw-bold">
-                        Adicionar comentário
-                    </label>
-
-                    <textarea
-                        name="mensagem"
-                        class="form-control"
-                        rows="3"
-                        placeholder="Digite seu comentário..."
-                        required></textarea>
-
-                    <div class="text-end mt-2">
-
-                        <button
-                            type="submit"
-                            class="btn btn-primary">
-
-                            <i class="bi bi-send"></i>
-                            Enviar comentário
-
-                        </button>
-
-                    </div>
-
-                </form>
-
-            {% endif %}
-
-        <hr class="mb-4">
-
+        <!-- Lista de comentários -->
         {% if comentarios %}
 
-            {% for comentario in comentarios %}
+            <div class="d-flex flex-column gap-3 mb-4">
 
-                <div class="d-flex align-items-start gap-3 mb-4">
+                {% for comentario in comentarios %}
 
-                    <div>
+                    <div class="border rounded-3 p-3 bg-light">
 
-                        <i class="bi bi-person-circle fs-2 text-primary"></i>
+                        <!-- Autor e data -->
+                        <div class="d-flex flex-column flex-md-row
+                                    justify-content-between gap-2 mb-2">
 
-                    </div>
+                            <div class="fw-semibold">
 
+                                <i class="bi bi-person-circle me-1 text-primary"></i>
 
-                    <div class="flex-grow-1">
-
-                        <div class="d-flex justify-content-between">
-
-                            <strong>
                                 {{ comentario.usuario }}
-                            </strong>
 
-                            <small class="text-muted">
+                            </div>
 
-                                <i class="bi bi-calendar3"></i>
+                            <small class="text-muted text-nowrap">
+
+                                <i class="bi bi-clock me-1"></i>
 
                                 {{ comentario.data_hora }}
 
@@ -476,29 +538,96 @@ Chamado #{{ chamado.id }}
                         </div>
 
 
-                        <div class="bg-light rounded p-3 mt-2">
-
-                            {{ comentario.mensagem }}
-
-                        </div>
+                        <!-- Mensagem -->
+                        <div class="text-dark"
+                             style="white-space: pre-wrap;">{{ comentario.mensagem }}</div>
 
                     </div>
 
-                </div>
+                {% endfor %}
 
-            {% endfor %}
+            </div>
+
 
         {% else %}
 
             <div class="text-center text-muted py-4">
 
-                <i class="bi bi-chat-left-text fs-1"></i>
+                <i class="bi bi-chat-left-dots fs-1"></i>
 
                 <p class="mt-2 mb-0">
-
                     Nenhum comentário registrado.
-
                 </p>
+
+            </div>
+
+        {% endif %}
+
+
+        <!-- Novo comentário -->
+        {% if chamado.status != "Fechado" %}
+
+            <div class="border-top pt-4 mt-2">
+
+                <h6 class="fw-bold mb-3">
+
+                    <i class="bi bi-pencil-square me-1"></i>
+                    Adicionar comentário
+
+                </h6>
+
+
+                <form method="POST"
+                      action="{{ url_for(
+                          'chamados.adicionar_comentario',
+                          chamado_id=chamado.id
+                      ) }}">
+
+                    <div class="mb-3">
+
+                        <textarea
+                            name="mensagem"
+                            class="form-control"
+                            rows="3"
+                            maxlength="1000"
+                            placeholder="Escreva uma atualização ou comentário sobre este chamado..."
+                            required></textarea>
+
+                    </div>
+
+
+                    <div class="d-flex justify-content-end">
+
+                        <button type="submit"
+                                class="btn btn-primary">
+
+                            <i class="bi bi-send me-1"></i>
+                            Enviar comentário
+
+                        </button>
+
+                    </div>
+
+                </form>
+
+            </div>
+
+
+        {% else %}
+
+            <!-- Chamado fechado -->
+            <div class="border-top pt-4 mt-3">
+
+                <div class="alert alert-light border mb-0
+                            d-flex align-items-center gap-2">
+
+                    <i class="bi bi-lock text-secondary"></i>
+
+                    <span class="text-muted">
+                        Este chamado está fechado e não permite novos comentários.
+                    </span>
+
+                </div>
 
             </div>
 

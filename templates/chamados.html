@@ -6,32 +6,49 @@ Chamados
 
 {% block content %}
 
-<div class="d-flex justify-content-between align-items-center mb-4">
+<!-- Cabeçalho -->
+<div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mb-4">
 
     <div>
-        <h2 class="fw-bold mb-1">Chamados</h2>
+        <h2 class="fw-bold mb-1">
+            <i class="bi bi-ticket-perforated me-2"></i>
+            Chamados
+        </h2>
         <p class="text-muted mb-0">
-            Gerencie todos os chamados do sistema.
+            Gerencie e acompanhe os chamados do sistema.
         </p>
     </div>
 
-    <a href="{{ url_for('chamados.novo_chamado') }}"
-       class="btn btn-primary">
+    {% if usuario.perfil != "Técnico" %}
+        <a href="{{ url_for('chamados.novo_chamado') }}"
+           class="btn btn-primary">
 
-        <i class="bi bi-plus-circle"></i>
-        Novo Chamado
+            <i class="bi bi-plus-circle me-1"></i>
+            Novo Chamado
 
-    </a>
+        </a>
+    {% endif %}
 
 </div>
 
-<div class="card shadow border-0">
+
+<!-- Filtros -->
+<div class="card shadow-sm border-0 mb-4">
 
     <div class="card-body">
 
-        <form method="GET" class="row g-3 mb-4">
+        <div class="d-flex align-items-center mb-3">
+            <i class="bi bi-funnel me-2 text-primary"></i>
+            <h6 class="fw-bold mb-0">Filtros</h6>
+        </div>
 
-            <div class="col-md-4">
+        <form method="GET" class="row g-3">
+
+            <div class="col-lg-4 col-md-6">
+
+                <label class="form-label small text-muted">
+                    Pesquisar
+                </label>
 
                 <input
                     type="text"
@@ -42,194 +59,394 @@ Chamados
 
             </div>
 
-            <div class="col-md-2">
 
-                <select
-                     name="status"
-                     class="form-select">
+            <div class="col-lg-2 col-md-6">
 
-                     <option value="">Todos Status</option>
+                <label class="form-label small text-muted">
+                    Status
+                </label>
 
-                     <option value="Aberto"
-                         {% if status=="Aberto" %}selected{% endif %}>
-                         Aberto
-                     </option>
+                <select name="status" class="form-select">
+
+                    <option value="">Todos</option>
+
+                    <option value="Aberto"
+                        {% if status == "Aberto" %}selected{% endif %}>
+                        Aberto
+                    </option>
 
                     <option value="Em andamento"
-                         {% if status=="Em andamento" %}selected{% endif %}>
+                        {% if status == "Em andamento" %}selected{% endif %}>
                         Em andamento
                     </option>
 
                     <option value="Fechado"
-                        {% if status=="Fechado" %}selected{% endif %}>
-                         Fechado
+                        {% if status == "Fechado" %}selected{% endif %}>
+                        Fechado
                     </option>
 
                 </select>
 
             </div>
 
-             <div class="col-md-2">
 
-                <select
-                    name="prioridade"
-                    class="form-select">
+            <div class="col-lg-2 col-md-6">
 
-                <option value="">Prioridade</option>
+                <label class="form-label small text-muted">
+                    Prioridade
+                </label>
 
-                <option value="Alta"
-                     {% if prioridade=="Alta" %}selected{% endif %}>
-                      Alta
-                </option>
+                <select name="prioridade" class="form-select">
 
-                <option value="Média"
-                    {% if prioridade=="Média" %}selected{% endif %}>
-                     Média
-                </option>
+                    <option value="">Todas</option>
 
-                <option value="Baixa"
-                    {% if prioridade=="Baixa" %}selected{% endif %}>
-                    Baixa
-                </option>
+                    <option value="Alta"
+                        {% if prioridade == "Alta" %}selected{% endif %}>
+                        Alta
+                    </option>
 
-            </select>
+                    <option value="Média"
+                        {% if prioridade == "Média" %}selected{% endif %}>
+                        Média
+                    </option>
 
-         </div>
+                    <option value="Baixa"
+                        {% if prioridade == "Baixa" %}selected{% endif %}>
+                        Baixa
+                    </option>
 
-        <div class="col-md-2">
+                </select>
 
-            <input
-            type="text"
-            name="tecnico"
-            class="form-control"
-            placeholder="Técnico"
-            value="{{ tecnico }}">
+            </div>
 
-        </div>
 
-        <div class="col-md-2">
+            <div class="col-lg-2 col-md-6">
 
-             <div class="d-flex gap-2">
+                <label class="form-label small text-muted">
+                    Técnico
+                </label>
 
-                <button
-                     type="submit"
-                    class="btn btn-primary flex-fill">
+                <input
+                    type="text"
+                    name="tecnico"
+                    class="form-control"
+                    placeholder="Nome do técnico"
+                    value="{{ tecnico }}">
 
-                     <i class="bi bi-search"></i>
-                     Filtrar
+            </div>
 
-                </button>
 
-                 <a href="{{ url_for('chamados.chamados') }}"
-                     class="btn btn-outline-secondary">
+            <div class="col-lg-2 col-md-12">
 
-                     <i class="bi bi-arrow-clockwise"></i>
+                <label class="form-label small text-muted d-none d-lg-block">
+                    &nbsp;
+                </label>
 
-                 </a>
+                <div class="d-flex gap-2">
 
+                    <button
+                        type="submit"
+                        class="btn btn-primary flex-grow-1">
+
+                        <i class="bi bi-search"></i>
+                        Filtrar
+
+                    </button>
+
+                    <a href="{{ url_for('chamados.chamados') }}"
+                       class="btn btn-outline-secondary"
+                       title="Limpar filtros">
+
+                        <i class="bi bi-arrow-clockwise"></i>
+
+                    </a>
+
+                </div>
+
+            </div>
+
+        </form>
+
+    </div>
+
+</div>
+
+
+<!-- Lista de chamados -->
+<div class="card shadow-sm border-0">
+
+    <div class="card-header bg-white border-0 pt-4 px-4">
+
+        <div class="d-flex justify-content-between align-items-center">
+
+            <div>
+                <h5 class="fw-bold mb-1">
+                    Lista de Chamados
+                </h5>
+
+                <small class="text-muted">
+                    {{ chamados|length }} chamado(s) encontrado(s)
+                </small>
             </div>
 
         </div>
 
-    </form>
+    </div>
 
-        <div class="table-responsive">
 
-            <table class="table table-hover align-middle">
+    <div class="card-body px-0">
 
-                <thead class="table-light">
+        {% if chamados %}
 
-                    <tr>
-                        <th>ID</th>
-                        <th>Título</th>
-                        <th>Solicitante</th>
-                        <th>Técnico</th>
-                        <th>Categoria</th>
-                        <th>Equipamento</th>
-                        <th>Prioridade</th>
-                        <th>Status</th>
-                        <th width="90">Ações</th>
-                    </tr>
+            <div class="table-responsive">
 
-                </thead>
+                <table class="table table-hover align-middle mb-0">
 
-                <tbody>
+                    <thead class="table-light">
 
-                {% for chamado in chamados %}
+                        <tr>
+                            <th class="ps-4">ID</th>
+                            <th>Título</th>
+                            <th>Solicitante</th>
+                            <th>Técnico</th>
+                            <th>Categoria</th>
+                            <th>Equipamento</th>
+                            <th>Prioridade</th>
+                            <th>Status</th>
+                            <th class="text-center pe-4">Ações</th>
+                        </tr>
 
-                <tr>
+                    </thead>
 
-                    <td>#{{ chamado.id }}</td>
-                    <td>{{ chamado.titulo }}</td>
-                    <td>{{ chamado.solicitante }}</td>
-                    <td>{{ chamado.tecnico }}</td>
-                    <td>{{ chamado.categoria }}</td>
-                    <td>{{ chamado.equipamento }}</td>
+                    <tbody>
 
-                    <td>
-                        {% if chamado.prioridade == "Alta" %}
-                            <span class="badge bg-danger">Alta</span>
-                        {% elif chamado.prioridade == "Média" %}
-                            <span class="badge bg-warning text-dark">Média</span>
-                        {% else %}
-                            <span class="badge bg-info text-dark">Baixa</span>
-                        {% endif %}
-                    </td>
+                        {% for chamado in chamados %}
 
-                    <td>
-                        {% if chamado.status == "Aberto" %}
-                            <span class="badge bg-success">Aberto</span>
-                        {% elif chamado.status == "Em andamento" %}
-                            <span class="badge bg-warning text-dark">Em andamento</span>
-                        {% else %}
-                            <span class="badge bg-secondary">Fechado</span>
-                        {% endif %}
-                    </td>
+                            <tr>
 
-                    <td>
+                                <td class="ps-4">
+                                    <span class="fw-semibold text-muted">
+                                        #{{ chamado.id }}
+                                    </span>
+                                </td>
 
-                        <div class="btn-group">
 
-                            <a href="{{ url_for('chamados.visualizar_chamado', chamado_id=chamado.id) }}"
-                            class="btn btn-sm btn-outline-primary">
-                                <i class="bi bi-eye"></i>
-                            </a>
+                                <td>
+                                    <a href="{{ url_for(
+                                        'chamados.visualizar_chamado',
+                                        chamado_id=chamado.id
+                                    ) }}"
+                                       class="text-decoration-none fw-semibold">
 
-                            <a href="{{ url_for('chamados.editar_chamado', chamado_id=chamado.id) }}"
-                            class="btn btn-sm btn-outline-warning">
-                                <i class="bi bi-pencil"></i>
-                            </a>
-                            
-                            {% if usuario.perfil == "Administrador" %}
-                                <form method="POST"
-                                    action="{{ url_for('chamados.excluir_chamado_rota', chamado_id=chamado.id) }}"
-                                    style="display:inline;"
+                                        {{ chamado.titulo }}
 
-                                    <button
-                                        type="submit"
-                                            class="btn btn-sm btn-outline-danger">
+                                    </a>
+                                </td>
 
-                                            <i class="bi bi-trash"></i>
 
-                                        </button>
+                                <td>
+                                    {{ chamado.solicitante }}
+                                </td>
 
-                                </form>
-                            
-                            {% endif %}
 
-                        </div>
+                                <td>
 
-                     </td>
+                                    {% if chamado.tecnico %}
 
-                </tr>
+                                        <i class="bi bi-person-check me-1 text-muted"></i>
+                                        {{ chamado.tecnico }}
 
-                {% endfor %}
+                                    {% else %}
 
-                </tbody>
+                                        <span class="text-muted">
+                                            <i class="bi bi-person-dash me-1"></i>
+                                            Não atribuído
+                                        </span>
 
-            </table>
+                                    {% endif %}
 
-        </div>
+                                </td>
+
+
+                                <td>
+                                    {{ chamado.categoria }}
+                                </td>
+
+
+                                <td>
+                                    {{ chamado.equipamento }}
+                                </td>
+
+
+                                <!-- Prioridade -->
+                                <td>
+
+                                    {% if chamado.prioridade == "Alta" %}
+
+                                        <span class="badge rounded-pill bg-danger">
+                                            <i class="bi bi-exclamation-circle me-1"></i>
+                                            Alta
+                                        </span>
+
+                                    {% elif chamado.prioridade == "Média" %}
+
+                                        <span class="badge rounded-pill bg-warning text-dark">
+                                            Média
+                                        </span>
+
+                                    {% elif chamado.prioridade == "Baixa" %}
+
+                                        <span class="badge rounded-pill bg-info text-dark">
+                                            Baixa
+                                        </span>
+
+                                    {% else %}
+
+                                        <span class="badge rounded-pill bg-secondary">
+                                            {{ chamado.prioridade }}
+                                        </span>
+
+                                    {% endif %}
+
+                                </td>
+
+
+                                <!-- Status -->
+                                <td>
+
+                                    {% if chamado.status == "Aberto" %}
+
+                                        <span class="badge rounded-pill bg-success">
+                                            <i class="bi bi-circle-fill me-1"
+                                               style="font-size: 6px;"></i>
+                                            Aberto
+                                        </span>
+
+                                    {% elif chamado.status == "Em andamento" %}
+
+                                        <span class="badge rounded-pill bg-warning text-dark">
+                                            <i class="bi bi-clock me-1"></i>
+                                            Em andamento
+                                        </span>
+
+                                    {% elif chamado.status == "Fechado" %}
+
+                                        <span class="badge rounded-pill bg-secondary">
+                                            <i class="bi bi-check-circle me-1"></i>
+                                            Fechado
+                                        </span>
+
+                                    {% else %}
+
+                                        <span class="badge rounded-pill bg-secondary">
+                                            {{ chamado.status }}
+                                        </span>
+
+                                    {% endif %}
+
+                                </td>
+
+
+                                <!-- Ações -->
+                                <td class="text-center pe-4">
+
+                                    <div class="d-flex justify-content-center gap-1">
+
+                                        <!-- Visualizar -->
+                                        <a href="{{ url_for(
+                                            'chamados.visualizar_chamado',
+                                            chamado_id=chamado.id
+                                        ) }}"
+                                           class="btn btn-sm btn-outline-primary"
+                                           title="Visualizar">
+
+                                            <i class="bi bi-eye"></i>
+
+                                        </a>
+
+
+                                        <!-- Editar somente Técnico/Admin e não fechado -->
+                                        {% if usuario.perfil in ["Técnico", "Administrador"]
+                                              and chamado.status != "Fechado" %}
+
+                                            <a href="{{ url_for(
+                                                'chamados.editar_chamado',
+                                                chamado_id=chamado.id
+                                            ) }}"
+                                               class="btn btn-sm btn-outline-warning"
+                                               title="Editar">
+
+                                                <i class="bi bi-pencil"></i>
+
+                                            </a>
+
+                                        {% endif %}
+
+
+                                        <!-- Excluir somente Administrador -->
+                                        {% if usuario.perfil == "Administrador" %}
+
+                                            <form
+                                                method="POST"
+                                                action="{{ url_for(
+                                                    'chamados.excluir_chamado_rota',
+                                                    chamado_id=chamado.id
+                                                ) }}"
+                                                class="d-inline">
+
+                                                <button
+                                                    type="submit"
+                                                    class="btn btn-sm btn-outline-danger"
+                                                    title="Excluir">
+
+                                                    <i class="bi bi-trash"></i>
+
+                                                </button>
+
+                                            </form>
+
+                                        {% endif %}
+
+                                    </div>
+
+                                </td>
+
+                            </tr>
+
+                        {% endfor %}
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        {% else %}
+
+            <!-- Nenhum chamado -->
+            <div class="text-center py-5">
+
+                <i class="bi bi-inbox fs-1 text-muted"></i>
+
+                <h5 class="mt-3 fw-bold">
+                    Nenhum chamado encontrado
+                </h5>
+
+                <p class="text-muted mb-3">
+                    Não encontramos chamados com os filtros selecionados.
+                </p>
+
+                <a href="{{ url_for('chamados.chamados') }}"
+                   class="btn btn-outline-primary">
+
+                    <i class="bi bi-arrow-clockwise me-1"></i>
+                    Limpar filtros
+
+                </a>
+
+            </div>
+
+        {% endif %}
 
     </div>
 
